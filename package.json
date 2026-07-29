@@ -1,0 +1,22 @@
+{
+  "name": "medivance-healthcare-system",
+  "version": "1.0.0",
+  "description": "MediVance - Full-Stack Healthcare & Clinical Operating System",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "dev": "cd backend && node server.js",
+    "seed": "cd backend && node seed/seed.js",
+    "postinstall": "cd backend && npm install"
+  },
+  "keywords": [
+    "healthcare",
+    "telemedicine",
+    "ehr",
+    "hospital-management",
+    "express",
+    "mongodb"
+  ],
+  "author": "MediVance Team",
+  "license": "MIT"
+}

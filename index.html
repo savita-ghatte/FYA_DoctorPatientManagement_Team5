@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediVance — Smart Healthcare Made Simple</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons for Social Media & UI Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Three.js Library for 3D Background Scene -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: #F8FAFC; 
+      position: relative;
+    }
+
+    #bg-three-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -10; /* Behind everything */
+      filter: blur(8px);
+      opacity: 0.6;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.07);
+    }
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Carousel Styling */
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="text-slate-900 antialiased overflow-x-hidden">
+
+  <!-- Background Three.js Scene Canvas -->
+  <div id="bg-three-container"></div>
+
+  <!-- Background Blur Blobs -->
+  <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-400/20 rounded-full blur-3xl -z-20"></div>
+  <div class="fixed top-[20%] right-[-5%] w-[400px] h-[400px] bg-cyan-300/20 rounded-full blur-3xl -z-20"></div>
+  <div class="fixed bottom-[-10%] left-[30%] w-[600px] h-[600px] bg-purple-300/20 rounded-full blur-3xl -z-20"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="fixed top-0 left-0 w-full glass-nav z-50 py-3 sm:py-4 px-4 sm:px-8 flex items-center justify-between">
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <img src="96b0c8c2-0c74-4fc2-88ee-e07d589e904a.png" alt="MediVance Logo" class="h-8 sm:h-10 w-auto object-contain" />
+      <span class="text-xl sm:text-2xl font-extrabold tracking-tight"><span class="text-sky-600">Medi</span><span class="text-cyan-500">Vance</span></span>
+    </div>
+    
+    <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+      <a href="#home" class="hover:text-blue-600 transition-colors">Home</a>
+      <a href="#doctors" class="hover:text-blue-600 transition-colors">Doctors</a>
+      <a href="#hospitals" class="hover:text-blue-600 transition-colors">Facilities</a>
+      <a href="#about" class="hover:text-blue-600 transition-colors">About</a>
+      <a href="#contact" class="hover:text-blue-600 transition-colors">Contact</a>
+    </div>
+
+    <div class="flex items-center space-x-2 sm:space-x-4">
+      <a href="loginpage.html?tab=signin" class="text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-600 px-3 sm:px-4 py-1.5 sm:py-2">Login</a>
+      <a href="loginpage.html?tab=signup" class="text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-lg shadow-blue-500/25 transition-all">Register</a>
+      <button onclick="const m = document.getElementById('mobileNavDrawer'); m.classList.toggle('hidden');" class="md:hidden p-2 text-slate-700 hover:text-blue-600 focus:outline-none" aria-label="Toggle Navigation">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Drawer -->
+  <div id="mobileNavDrawer" class="hidden fixed top-[60px] left-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 z-40 p-4 md:hidden flex-col space-y-3 font-medium text-slate-700 shadow-xl">
+    <a href="#home" onclick="document.getElementById('mobileNavDrawer').classList.add('hidden')" class="py-2 px-3 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-house text-blue-600 mr-2"></i> Home</a>
+    <a href="#doctors" onclick="document.getElementById('mobileNavDrawer').classList.add('hidden')" class="py-2 px-3 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-user-doctor text-sky-600 mr-2"></i> Doctors</a>
+    <a href="#hospitals" onclick="document.getElementById('mobileNavDrawer').classList.add('hidden')" class="py-2 px-3 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-hospital text-purple-600 mr-2"></i> Facilities</a>
+    <a href="#about" onclick="document.getElementById('mobileNavDrawer').classList.add('hidden')" class="py-2 px-3 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-circle-info text-cyan-600 mr-2"></i> About</a>
+    <a href="#contact" onclick="document.getElementById('mobileNavDrawer').classList.add('hidden')" class="py-2 px-3 rounded-lg hover:bg-slate-100"><i class="fa-solid fa-envelope text-emerald-600 mr-2"></i> Contact</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="home" class="min-h-screen pt-24 sm:pt-32 pb-12 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col justify-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      
+      <!-- Hero Text Column -->
+      <div class="lg:col-span-6 space-y-5 sm:space-y-6">
+        <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full glass-card text-xs font-semibold text-blue-600 border border-blue-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Next-Gen Healthcare Management Platform</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.15]">
+          Smart Healthcare <br /><span class="bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">Made Simple</span>
+        </h1>
+
+        <p class="text-sm sm:text-lg text-slate-600 max-w-lg leading-relaxed">
+          Manage appointments, digital health records, online consultations, prescriptions, and patient care in one secure platform.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:space-x-4 pt-2 sm:pt-4">
+          <button onclick="window.location.href='loginpage.html'" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 sm:px-8 py-3.5 sm:py-4 rounded-full shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 text-center">
+            Book Appointment
+          </button>
+          <button onclick="document.getElementById('doctors').scrollIntoView({behavior:'smooth'})" class="glass-card hover:bg-white/80 text-slate-700 font-semibold px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-slate-200 transition-all text-center">
+            Explore Services
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Video Container -->
+      <div class="lg:col-span-6 relative flex justify-center mt-4 lg:mt-0">
+        <div class="w-full h-[260px] sm:h-[400px] lg:h-[500px] glass-card rounded-2xl sm:rounded-3xl p-1.5 sm:p-2 relative overflow-hidden border border-white/80 shadow-2xl">
+          <video 
+            autoplay 
+            loop 
+            muted 
+            playsinline 
+            preload="auto"
+            class="w-full h-full rounded-2xl object-cover bg-slate-900"
+          >
+            <source src="MAKE_THIS_IMG_AS_D_ANIMATION.mp4" type="video/mp4" />
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-loop-27471-large.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Doctors Section -->
+  <section id="doctors" class="py-20 px-8 max-w-7xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl font-bold text-slate-900 tracking-tight sm:text-4xl">Meet Our Specialist Doctors</h2>
+      <p class="mt-4 text-slate-600">Consult with highly qualified, top-rated healthcare professionals across various disciplines.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      
+      <!-- Doctor 1 -->
+      <div class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+        <img src="WhatsApp Image 2026-07-24 at 11.23.52 AM.jpeg" alt="Dr. Vaibhavi Gulhane" class="w-full h-64 object-cover object-top" />
+        <div class="p-6">
+          <span class="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full mb-2">Neurologist</span>
+          <h3 class="text-xl font-bold text-slate-900">Dr. Vaibhavi Gulhane</h3>
+          <p class="text-xs text-slate-500 mb-3">10+ Years Experience</p>
+          
+          <div class="flex items-center text-amber-500 mb-3 text-sm">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <span class="text-slate-600 font-semibold text-xs ml-2">5.0 (210 Reviews)</span>
+          </div>
+
+          <p class="text-slate-600 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+            "Helped me treat chronic migraine issues after years of unsuccessful trials."
+          </p>
+
+          <button onclick="window.location.href='loginpage.html'" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl shadow-md transition-all">Book Consult</button>
+        </div>
+      </div>
+
+      <!-- Doctor 2 -->
+      <div class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+        <img src="WhatsApp Image 2026-07-24 at 12.08.39 PM.jpeg" alt="Dr. Soham Gadhave" class="w-full h-64 object-cover object-top" />
+        <div class="p-6">
+          <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full mb-2">Cardiologist</span>
+          <h3 class="text-xl font-bold text-slate-900">Dr. Soham Gadhave</h3>
+          <p class="text-xs text-slate-500 mb-3">15+ Years Experience</p>
+          
+          <div class="flex items-center text-amber-500 mb-3 text-sm">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star-half-stroke"></i>
+            <span class="text-slate-600 font-semibold text-xs ml-2">4.8 (95 Reviews)</span>
+          </div>
+
+          <p class="text-slate-600 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+            "Top tier cardiac specialist! Accurate diagnosis and reassuring demeanour."
+          </p>
+
+          <button onclick="window.location.href='loginpage.html'" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl shadow-md transition-all">Book Consult</button>
+        </div>
+      </div>
+
+      <!-- Doctor 3 -->
+      <div class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+        <img src="WhatsApp Image 2026-07-24 at 11.29.01 AM.jpeg" alt="Dr. Pranjali Gaikwad" class="w-full h-64 object-cover object-top" />
+        <div class="p-6">
+          <span class="inline-block px-3 py-1 bg-pink-100 text-pink-700 text-xs font-semibold rounded-full mb-2">Gynecologist & Obstetrician</span>
+          <h3 class="text-xl font-bold text-slate-900">Dr. Pranjali Gaikwad</h3>
+          <p class="text-xs text-slate-500 mb-3">12+ Years Experience</p>
+          
+          <div class="flex items-center text-amber-500 mb-3 text-sm">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <span class="text-slate-600 font-semibold text-xs ml-2">4.9 (128 Reviews)</span>
+          </div>
+          
+          <p class="text-slate-600 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+            "Dr. Pranjali made my pregnancy journey smooth and anxiety-free. Extremely caring!"
+          </p>
+
+          <button onclick="window.location.href='loginpage.html'" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl shadow-md transition-all">Book Consult</button>
+        </div>
+      </div>
+
+      <!-- Doctor 4 -->
+      <div class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+        <img src="WhatsApp Image 2026-07-24 at 11.20.22 AM.jpeg" alt="Dr. Gandharva Kolhe" class="w-full h-64 object-cover object-top" />
+        <div class="p-6">
+          <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-full mb-2">Pediatrician</span>
+          <h3 class="text-xl font-bold text-slate-900">Dr. Gandharva Kolhe</h3>
+          <p class="text-xs text-slate-500 mb-3">8+ Years Experience</p>
+          
+          <div class="flex items-center text-amber-500 mb-3 text-sm">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <span class="text-slate-600 font-semibold text-xs ml-2">4.9 (160 Reviews)</span>
+          </div>
+
+          <p class="text-slate-600 text-xs italic bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4">
+            "Wonderful doctor with kids. My son isn't afraid of hospital visits anymore!"
+          </p>
+
+          <button onclick="window.location.href='loginpage.html'" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl shadow-md transition-all">Book Consult</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Auto-Sliding Hospital Gallery Carousel -->
+  <section id="hospitals" class="py-20 px-8 max-w-7xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="text-3xl font-bold text-slate-900 tracking-tight sm:text-4xl">State-of-the-Art Partner Hospitals</h2>
+      <p class="mt-4 text-slate-600">Explore world-class facilities and modern medical centers in our network.</p>
+    </div>
+
+    <!-- Carousel Container -->
+    <div class="relative overflow-hidden rounded-3xl glass-card p-4 shadow-2xl">
+      <div id="carousel-track" class="carousel-track">
+        
+        <!-- Slide 1 -->
+        <div class="min-w-full px-2">
+          <div class="relative h-96 rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="St. Jude City Hospital" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
+              <h3 class="text-2xl font-bold">St. Jude City Medical Center</h3>
+              <p class="text-sm text-slate-200">Advanced Surgery, ICU, and Emergency Care • New York, NY</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="min-w-full px-2">
+          <div class="relative h-96 rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Apex Healthcare Pavilion" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
+              <h3 class="text-2xl font-bold">Apex Healthcare Pavilion</h3>
+              <p class="text-sm text-slate-200">Specialized Cardiology & Robotic Surgery Unit • Chicago, IL</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="min-w-full px-2">
+          <div class="relative h-96 rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Nova Care Maternity Hospital" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
+              <h3 class="text-2xl font-bold">Nova Maternity & Children's Clinic</h3>
+              <p class="text-sm text-slate-200">Gynecology, Obstetrics, & NICU Excellence • San Francisco, CA</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Carousel Indicators -->
+      <div class="flex justify-center space-x-2 mt-4">
+        <button onclick="goToSlide(0)" class="w-3 h-3 rounded-full bg-blue-600 indicator-dot"></button>
+        <button onclick="goToSlide(1)" class="w-3 h-3 rounded-full bg-slate-300 indicator-dot"></button>
+        <button onclick="goToSlide(2)" class="w-3 h-3 rounded-full bg-slate-300 indicator-dot"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 px-8 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="text-blue-600 font-semibold text-sm uppercase tracking-wide">About Us</span>
+        <h2 class="mt-2 text-3xl font-bold text-slate-900 tracking-tight sm:text-4xl">Trusted Care, Powered by MediVance</h2>
+        <p class="mt-5 text-slate-600 leading-relaxed">
+          MediVance is a doctor-patient management platform connecting patients with a trusted network of hospitals and specialists. Our mission is to make quality healthcare simple, transparent, and accessible — from booking an appointment to consulting your doctor, managing prescriptions, and tracking your health records, all in one place.
+        </p>
+        <p class="mt-4 text-slate-600 leading-relaxed">
+          We partner with accredited hospitals and certified doctors across specialties including cardiology, pediatrics, orthopedics, and general medicine, ensuring every patient receives timely, reliable, and compassionate care.
+        </p>
+
+        <div class="grid grid-cols-3 gap-6 mt-8">
+          <div>
+            <p class="text-3xl font-bold text-blue-600">15+</p>
+            <p class="text-sm text-slate-500 mt-1">Partner Hospitals</p>
+          </div>
+          <div>
+            <p class="text-3xl font-bold text-blue-600">200+</p>
+            <p class="text-sm text-slate-500 mt-1">Certified Doctors</p>
+          </div>
+          <div>
+            <p class="text-3xl font-bold text-blue-600">50k+</p>
+            <p class="text-sm text-slate-500 mt-1">Patients Served</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
+        <img src="https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover" alt="MediVance hospital care" />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer & Social Media Handles -->
+  <footer id="contact" class="bg-slate-900 text-slate-300 pt-16 pb-12 mt-20">
+    <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12 border-b border-slate-800">
+      
+      <!-- App Info -->
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+          <div class="bg-white p-1 rounded-xl shadow-md inline-block">
+            <img src="96b0c8c2-0c74-4fc2-88ee-e07d589e904a.png" alt="MediVance Logo" class="h-9 w-auto object-contain" />
+          </div>
+          <span class="text-2xl font-extrabold tracking-tight"><span class="text-sky-400">Medi</span><span class="text-cyan-400">Vance</span></span>
+        </div>
+        <p class="text-sm text-slate-400">
+          MediVance is revolutionizing healthcare accessibility. Book appointments, store health records, and consult doctors on demand.
+        </p>
+
+        <!-- Social Media Handles -->
+        <div class="flex space-x-4 pt-2">
+          <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-sky-400 hover:text-white transition-all">
+            <i class="fa-brands fa-twitter"></i>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-pink-600 hover:text-white transition-all">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-700 hover:text-white transition-all">
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#home" class="hover:text-blue-400 transition-colors">Home</a></li>
+          <li><a href="#doctors" class="hover:text-blue-400 transition-colors">Find Doctors</a></li>
+          <li><a href="#hospitals" class="hover:text-blue-400 transition-colors">Partner Hospitals</a></li>
+          <li><a href="#about" class="hover:text-blue-400 transition-colors">About Us</a></li>
+          <li><a href="#" class="hover:text-blue-400 transition-colors">Teleconsultation</a></li>
+          <li><a href="#" class="hover:text-blue-400 transition-colors">Mobile App</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-4">Contact & Support</h4>
+        <ul class="space-y-3 text-sm text-slate-400">
+          <li class="flex items-center space-x-3">
+            <i class="fa-solid fa-location-dot text-blue-500"></i>
+            <span>100 Health Tech Way, CA 94107</span>
+          </li>
+          <li class="flex items-center space-x-3">
+            <i class="fa-solid fa-phone text-blue-500"></i>
+            <span>+1 (800) 555-CARE</span>
+          </li>
+          <li class="flex items-center space-x-3">
+            <i class="fa-solid fa-envelope text-blue-500"></i>
+            <span>support@medivance.health</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-4">Stay Informed</h4>
+        <p class="text-xs text-slate-400 mb-4">Subscribe for updates on health advice and new clinical features.</p>
+        <form onsubmit="event.preventDefault(); alert('Thank you for subscribing to MediVance updates!'); this.reset();" class="flex flex-col space-y-2">
+          <input type="email" required placeholder="Enter your email" class="px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500" />
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-xs transition-all">Subscribe</button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-8 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+      <p>© 2026 MediVance Health Tech Inc. All rights reserved.</p>
+      <div class="flex space-x-6 mt-4 md:mt-0">
+        <a href="#" class="hover:text-slate-400">Privacy Policy</a>
+        <a href="#" class="hover:text-slate-400">Terms of Service</a>
+        <a href="#" class="hover:text-slate-400">HIPAA Compliance</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Hospital Carousel Script -->
+  <script>
+    let currentSlide = 0;
+    const track = document.getElementById('carousel-track');
+    const dots = document.querySelectorAll('.indicator-dot');
+    const totalSlides = 3;
+
+    function goToSlide(slideIndex) {
+      currentSlide = slideIndex;
+      track.style.transform = `translateX(-${slideIndex * 100}%)`;
+      dots.forEach((dot, idx) => {
+        if (idx === slideIndex) {
+          dot.classList.add('bg-blue-600');
+          dot.classList.remove('bg-slate-300');
+        } else {
+          dot.classList.remove('bg-blue-600');
+          dot.classList.add('bg-slate-300');
+        }
+      });
+    }
+
+    // Auto-scroll every 4 seconds
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      goToSlide(currentSlide);
+    }, 4000);
+  </script>
+
+  <!-- Background 3D Scene Initialization Script -->
+  <script>
+    // Mouse Position Tracker
+    let mouseX = 0;
+    let mouseY = 0;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    // 3D Scene Setup
+    const bgContainer = document.getElementById('bg-three-container');
+    const bgScene = new THREE.Scene();
+    const bgCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+    bgCamera.position.z = 10;
+
+    const bgRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    bgRenderer.setSize(window.innerWidth, window.innerHeight);
+    bgRenderer.setPixelRatio(window.devicePixelRatio);
+    bgContainer.appendChild(bgRenderer.domElement);
+
+    // Lights
+    const bgAmbient = new THREE.AmbientLight(0xffffff, 0.6);
+    bgScene.add(bgAmbient);
+    const bgDir = new THREE.DirectionalLight(0xffffff, 0.8);
+    bgDir.position.set(10, 10, 10);
+    bgScene.add(bgDir);
+
+    // Grouping
+    const bgMedicalGroup = new THREE.Group();
+    bgScene.add(bgMedicalGroup);
+
+    // Materials
+    const matBlue = new THREE.MeshPhysicalMaterial({
+      color: 0x2563eb,
+      roughness: 0.1,
+      metalness: 0.1,
+      transmission: 0.6,
+      opacity: 0.9,
+      transparent: true,
+      clearcoat: 1.0
+    });
+    const nodeGeo = new THREE.SphereGeometry(0.12, 16, 16);
+    const nodeMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.2 });
+    const matCyan = new THREE.MeshPhongMaterial({ color: 0x06b6d4, shininess: 100 });
+    const matPurple = new THREE.MeshPhongMaterial({ color: 0x7c3aed, shininess: 100 });
+
+    // 1. Cross Shape
+    const crossShape = new THREE.Group();
+    const vBar = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2.4, 0.5), matBlue);
+    const hBar = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.8, 0.5), matBlue);
+    crossShape.add(vBar);
+    crossShape.add(hBar);
+    bgMedicalGroup.add(crossShape);
+
+    // 2. DNA Strand Group
+    const dnaGroup = new THREE.Group();
+    for (let i = -8; i <= 8; i++) {
+      const y = i * 0.25;
+      const angle = i * 0.5;
+      const sphere1 = new THREE.Mesh(nodeGeo, nodeMat);
+      sphere1.position.set(Math.cos(angle) * 1.0, y, Math.sin(angle) * 1.0);
+      const sphere2 = new THREE.Mesh(nodeGeo, nodeMat);
+      sphere2.position.set(-Math.cos(angle) * 1.0, y, -Math.sin(angle) * 1.0);
+      dnaGroup.add(sphere1);
+      dnaGroup.add(sphere2);
+    }
+    dnaGroup.position.set(-5, 0, -3);
+    bgMedicalGroup.add(dnaGroup);
+
+    // Helper for Capsule creation
+    function createCapsule() {
+      const capGroup = new THREE.Group();
+      const capGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.6, 32);
+      const topGeo = new THREE.SphereGeometry(0.2, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+      const body = new THREE.Mesh(capGeo, matCyan);
+      const cap1 = new THREE.Mesh(topGeo, matPurple);
+      cap1.position.y = 0.3;
+      capGroup.add(body);
+      capGroup.add(cap1);
+      return capGroup;
+    }
+
+    // 3. Floating Pill Capsules
+    const pill1 = createCapsule();
+    pill1.position.set(4, 3, -1);
+    pill1.rotation.z = Math.PI / 4;
+    bgMedicalGroup.add(pill1);
+
+    const pill2 = createCapsule();
+    pill2.position.set(6, -2, -2);
+    pill2.rotation.x = Math.PI / 3;
+    bgMedicalGroup.add(pill2);
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+      bgRenderer.setSize(window.innerWidth, window.innerHeight);
+      bgCamera.aspect = window.innerWidth / window.innerHeight;
+      bgCamera.updateProjectionMatrix();
+    });
+
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Background Scene Animation
+      crossShape.rotation.y += 0.005;
+      dnaGroup.rotation.y += 0.01;
+      pill1.rotation.y += 0.01;
+      pill2.rotation.z += 0.01;
+      bgMedicalGroup.position.y = Math.sin(Date.now() * 0.001) * 0.2;
+
+      bgMedicalGroup.rotation.x += (mouseY * 0.1 - bgMedicalGroup.rotation.x) * 0.05;
+      bgMedicalGroup.rotation.y += (mouseX * 0.1 - bgMedicalGroup.rotation.y) * 0.05;
+
+      bgRenderer.render(bgScene, bgCamera);
+    }
+
+    animate();
+  </script>
+<script src="chatbot-widget.js"></script>
+</body>
+</html>
