@@ -3,238 +3,268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Assistant Dashboard</title>
+<title>Smart Assistant Dashboard</title>
 
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Segoe UI, sans-serif;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 body{
-    background:#eef2f7;
+    background:linear-gradient(135deg,#141E30,#243B55);
+    color:white;
+    min-height:100vh;
 }
 
-/* Navbar */
-.navbar{
-    background:#4f46e5;
-    color:white;
-    padding:15px 30px;
+.container{
+    display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:240px;
+    height:100vh;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(12px);
+    padding:25px;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:40px;
+}
+
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.menu li:hover{
+    background:#00c6ff;
+}
+
+/* Main */
+
+.main{
+    flex:1;
+    padding:30px;
+}
+
+.header{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    margin-bottom:30px;
 }
 
-.navbar h2{
-    font-size:24px;
-}
-
-.navbar button{
-    background:white;
-    color:#4f46e5;
+.search{
+    padding:10px;
+    width:250px;
     border:none;
-    padding:8px 18px;
-    border-radius:20px;
-    cursor:pointer;
-    font-weight:bold;
+    border-radius:25px;
 }
 
-/* Layout */
-.container{
+.cards{
     display:grid;
-    grid-template-columns:2fr 1fr;
+    grid-template-columns:repeat(4,1fr);
     gap:20px;
-    padding:20px;
-}
-
-/* Cards */
-.stats{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-    margin-bottom:20px;
 }
 
 .card{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 5px 10px rgba(0,0,0,.08);
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(10px);
+    padding:25px;
+    border-radius:15px;
 }
 
-.card h4{
-    color:#666;
-    margin-bottom:10px;
+.card h3{
+    color:#ddd;
 }
 
-.card h2{
-    color:#4f46e5;
+.card h1{
+    margin-top:10px;
+    color:#00e5ff;
 }
 
-/* Task Table */
-.tasks{
-    background:white;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 5px 10px rgba(0,0,0,.08);
+/* Dashboard */
+
+.dashboard{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+    margin-top:25px;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:15px;
-}
-
-th,td{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-    text-align:left;
-}
-
-.status{
-    color:green;
-    font-weight:bold;
-}
-
-.pending{
-    color:orange;
-}
-
-/* Right Panel */
 .panel{
-    background:white;
+    background:rgba(255,255,255,.08);
     padding:20px;
-    border-radius:12px;
-    box-shadow:0 5px 10px rgba(0,0,0,.08);
+    border-radius:15px;
 }
 
-.panel h3{
-    margin-bottom:15px;
+.task{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid rgba(255,255,255,.2);
 }
 
-.chat{
-    background:#f5f5f5;
-    padding:12px;
-    border-radius:8px;
-    margin:10px 0;
+.progress{
+    height:8px;
+    background:#333;
+    border-radius:10px;
+    overflow:hidden;
+    margin:10px 0 20px;
 }
 
-button.action{
+.progress span{
+    display:block;
+    width:75%;
+    height:100%;
+    background:#00e5ff;
+}
+
+button{
     width:100%;
     padding:12px;
-    margin-top:15px;
-    border:none;
-    background:#4f46e5;
+    background:#00c6ff;
     color:white;
+    border:none;
     border-radius:8px;
     cursor:pointer;
+    margin-top:20px;
 }
 
-button.action:hover{
-    background:#3730a3;
+button:hover{
+    background:#0099cc;
 }
 
-@media(max-width:768px){
-.container{
-    grid-template-columns:1fr;
+@media(max-width:900px){
+
+.cards{
+grid-template-columns:repeat(2,1fr);
 }
 
-.stats{
-    grid-template-columns:1fr;
+.dashboard{
+grid-template-columns:1fr;
 }
+
+.sidebar{
+display:none;
 }
+
+}
+
 </style>
 
 </head>
-<body>
 
-<div class="navbar">
-    <h2>🤖 AI Assistant Dashboard</h2>
-    <button>Profile</button>
-</div>
+<body>
 
 <div class="container">
 
-<div>
+<div class="sidebar">
 
-<div class="stats">
+<div class="logo">🤖 Smart AI</div>
+
+<ul class="menu">
+<li>🏠 Dashboard</li>
+<li>💬 Chats</li>
+<li>📅 Calendar</li>
+<li>📂 Projects</li>
+<li>📊 Analytics</li>
+<li>⚙ Settings</li>
+</ul>
+
+</div>
+
+<div class="main">
+
+<div class="header">
+<h2>Assistant Dashboard</h2>
+<input type="text" class="search" placeholder="Search...">
+</div>
+
+<div class="cards">
 
 <div class="card">
-<h4>Total Users</h4>
-<h2>1,245</h2>
+<h3>Users</h3>
+<h1>2,145</h1>
 </div>
 
 <div class="card">
-<h4>Today's Tasks</h4>
-<h2>42</h2>
+<h3>Active Tasks</h3>
+<h1>58</h1>
 </div>
 
 <div class="card">
-<h4>AI Responses</h4>
-<h2>389</h2>
+<h3>Completed</h3>
+<h1>194</h1>
+</div>
+
+<div class="card">
+<h3>AI Requests</h3>
+<h1>5,620</h1>
 </div>
 
 </div>
 
-<div class="tasks">
+<div class="dashboard">
 
-<h3>Recent Tasks</h3>
+<div class="panel">
 
-<table>
+<h3>Today's Tasks</h3>
 
-<tr>
-<th>Task</th>
-<th>Status</th>
-</tr>
+<div class="task">
+<span>Generate Monthly Report</span>
+<span>✔</span>
+</div>
 
-<tr>
-<td>Generate Report</td>
-<td class="status">Completed</td>
-</tr>
+<div class="task">
+<span>Review User Feedback</span>
+<span>⏳</span>
+</div>
 
-<tr>
-<td>Reply to Email</td>
-<td class="pending">Pending</td>
-</tr>
+<div class="task">
+<span>Update Knowledge Base</span>
+<span>⏳</span>
+</div>
 
-<tr>
-<td>Schedule Meeting</td>
-<td class="status">Completed</td>
-</tr>
-
-<tr>
-<td>Create Invoice</td>
-<td class="pending">Pending</td>
-</tr>
-
-</table>
-
+<div class="task">
+<span>Schedule Team Meeting</span>
+<span>✔</span>
 </div>
 
 </div>
 
 <div class="panel">
 
-<h3>Assistant Activity</h3>
+<h3>Performance</h3>
 
-<div class="chat">
-<strong>Assistant:</strong><br>
-Daily report has been generated successfully.
+<p>Overall Progress</p>
+
+<div class="progress">
+<span></span>
 </div>
 
-<div class="chat">
-<strong>Assistant:</strong><br>
-You have 2 pending approvals.
+<p>75% Completed</p>
+
+<button>Launch Assistant</button>
+
 </div>
 
-<div class="chat">
-<strong>Assistant:</strong><br>
-Meeting starts in 30 minutes.
 </div>
-
-<button class="action">Open Assistant</button>
 
 </div>
 
