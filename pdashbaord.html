@@ -1,270 +1,2895 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Doctor Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medivance - Patient Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
+    <style>
+        :root {
+            --primary-blue: #0062FF;
+            --primary-dark: #0A192F;
+            --sidebar-bg: #0C1E38;
+            --accent-green: #00D084;
+            --accent-red: #FF4D4D;
+            --accent-orange: #FF9F43;
+            --bg-light: #F8FAFC;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.06), 0 10px 12px rgba(0, 0, 0, 0.04);
+            --border-radius: 18px;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+        }
 
-body{
-    background:#eef3f8;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-/* Header */
-header{
-    background:#ffffff;
-    padding:20px 40px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
-}
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+        }
 
-header h2{
-    color:#1d4ed8;
-}
+        /* --- Medivance Background Styling --- */
+        #bg-three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(8px);
+            opacity: 0.75;
+        }
 
-header button{
-    background:#1d4ed8;
-    color:#fff;
-    border:none;
-    padding:10px 18px;
-    border-radius:8px;
-    cursor:pointer;
-}
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
 
-/* Dashboard Grid */
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(59, 130, 246, 0.22); }
+        .blob-2 { top: 20%; right: -5%; width: 450px; height: 450px; background: rgba(6, 182, 212, 0.2); }
+        .blob-3 { bottom: -10%; left: 30%; width: 600px; height: 600px; background: rgba(168, 85, 247, 0.18); }
 
-.dashboard{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:20px;
-    padding:30px;
-}
+        /* App Container Layout */
+        .app-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            position: relative;
+            padding: 16px;
+            gap: 16px;
+        }
 
-/* Left Side */
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+            box-shadow: 0 20px 40px rgba(10, 25, 47, 0.3);
+            z-index: 2;
+            overflow-y: auto;
+            scrollbar-width: none;
+            padding: 18px 14px;
+            flex-shrink: 0;
+        }
 
-.left{
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-}
+        .sidebar::-webkit-scrollbar { display: none; }
 
-.box{
-    background:#fff;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
+        /* --- Premium Integrated Brand Header --- */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 6px 18px 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 20px;
+        }
 
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-}
+        .brand-logo-container {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            flex-shrink: 0;
+        }
 
-.stat{
-    background:#f5f9ff;
-    text-align:center;
-    padding:20px;
-    border-radius:12px;
-}
+        .brand-logo-container::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+            opacity: 0.8;
+            pointer-events: none;
+        }
 
-.stat h3{
-    color:#2563eb;
-    font-size:28px;
-}
+        .brand-logo-svg {
+            width: 28px;
+            height: 28px;
+        }
 
-/* Queue */
+        .brand-title-box {
+            display: flex;
+            flex-direction: column;
+        }
 
-.queue-item{
-    display:flex;
-    justify-content:space-between;
-    padding:15px 0;
-    border-bottom:1px solid #ddd;
-}
+        .brand-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+            line-height: 1;
+            background: linear-gradient(135deg, #FFFFFF 0%, #38BDF8 60%, #00D084 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-/* Right Side */
+        .brand-tagline {
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: #64748B;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
 
-.right{
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-}
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-.calendar{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:8px;
-    margin-top:15px;
-}
+        .sidebar-profile:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
 
-.calendar div{
-    background:#f3f4f6;
-    padding:12px;
-    text-align:center;
-    border-radius:8px;
-}
+        .sidebar-profile img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+        }
 
-.today{
-    background:#2563eb !important;
-    color:white;
-}
+        .sidebar-profile h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+        }
 
-.activity p{
-    margin:12px 0;
-}
+        .sidebar-profile p {
+            font-size: 0.72rem;
+            color: #94A3B8;
+        }
 
-.progress{
-    width:100%;
-    background:#ddd;
-    border-radius:20px;
-    overflow:hidden;
-    height:10px;
-    margin-top:10px;
-}
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
 
-.progress span{
-    display:block;
-    height:10px;
-    width:82%;
-    background:#22c55e;
-}
-</style>
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            color: #94A3B8;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-item.active {
+            background: var(--primary-blue);
+            box-shadow: 0 8px 20px rgba(0, 98, 255, 0.35);
+        }
+
+        .nav-item i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.emergency {
+            color: #FF6B6B;
+            background: rgba(255, 77, 77, 0.1);
+            border: 1px solid rgba(255, 77, 77, 0.15);
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            margin: 8px 12px;
+        }
+
+        .nav-item.logout {
+            color: #FF8080;
+        }
+
+        .nav-item.logout:hover {
+            background: rgba(255, 77, 77, 0.15);
+            color: #FF4D4D;
+        }
+
+        /* Main Wrapper */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 4px;
+            padding-bottom: 24px;
+        }
+
+        .main-wrapper::-webkit-scrollbar { width: 6px; }
+        .main-wrapper::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 10px; }
+
+        /* --- SPA Page Routing System --- */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .page-section.active-page {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .date-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: -8px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+        }
+
+        /* Custom Patient Hero Header Layout */
+        .hero-banner {
+            background: linear-gradient(135deg, #0F172A 0%, #1E40AF 100%);
+            border-radius: var(--border-radius);
+            padding: 20px 28px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            box-shadow: var(--card-shadow);
+        }
+
+        .patient-identity {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hero-avatar-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .hero-avatar-wrapper:hover {
+            transform: scale(1.08);
+        }
+
+        .hero-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .online-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: var(--accent-green);
+            border: 2px solid #0062FF;
+            border-radius: 50%;
+        }
+
+        .hero-content h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .hero-content p {
+            font-size: 0.82rem;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .patient-tags {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .patient-tag {
+            background: rgba(255, 255, 255, 0.15);
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .next-appt-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            padding: 10px 18px;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.2s ease;
+        }
+
+        .next-appt-badge:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .next-appt-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        /* Card System */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        .placeholder-content {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+        
+        .placeholder-content i {
+            font-size: 3rem;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .bottom-sections-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .vital-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .vital-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vital-header span {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .vital-icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .vital-body {
+            margin-top: 14px;
+        }
+
+        .vital-value {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .vital-value small {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .vital-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .vital-change.up { color: #10B981; }
+        .vital-change.down { color: #EF4444; }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+
+        .chart-main { grid-column: span 8; }
+        .chart-side { grid-column: span 4; }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-header-flex h3 {
+            font-size: 0.98rem;
+            font-weight: 700;
+        }
+
+        .pill-tabs {
+            display: flex;
+            background: rgba(226, 232, 240, 0.6);
+            padding: 3px;
+            border-radius: 20px;
+            gap: 2px;
+        }
+
+        .pill-tab {
+            padding: 4px 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
+
+        .pill-tab.active {
+            background: var(--primary-blue);
+            color: #fff;
+        }
+
+        .percentage-badge {
+            background: rgba(0, 208, 132, 0.15);
+            color: #00875A;
+            font-weight: 700;
+            font-size: 0.72rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: -6px;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 16px;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: var(--card-shadow);
+            transition: all 0.25s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .action-card span {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .view-all-link {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        .list-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.4);
+            transition: background 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .list-item:hover {
+            background: rgba(255, 255, 255, 0.85);
+            transform: translateX(4px);
+        }
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.88rem;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .list-item:hover .avatar-circle {
+            transform: scale(1.15);
+        }
+
+        .item-info h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .item-info p {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .item-right {
+            text-align: right;
+        }
+
+        .item-right .date-text {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .item-right .time-text {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .med-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .check-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #CBD5E1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .check-circle.checked {
+            background: #10B981;
+            border-color: #10B981;
+            color: #fff;
+            font-size: 0.65rem;
+        }
+
+        /* --- Modal Popups Overlay --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(10, 25, 47, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex !important;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px;
+            width: 90%;
+            max-width: 440px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            position: relative;
+            animation: modalScale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalScale {
+            from { transform: scale(0.7) translateY(30px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .modal-icon-badge {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 159, 67, 0.15);
+            color: var(--accent-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 16px;
+        }
+
+        .modal-btn {
+            background: var(--primary-blue);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 98, 255, 0.3);
+        }
+
+        /* --- Doctor Profile Animated Modal System --- */
+        .doc-modal-card {
+            background: linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%);
+            border-radius: 24px;
+            padding: 28px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 30px 60px rgba(10, 25, 47, 0.4);
+            position: relative;
+            animation: docModalPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            overflow: hidden;
+        }
+
+        @keyframes docModalPop {
+            0% { opacity: 0; transform: scale(0.75) translateY(40px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .doc-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .doc-avatar-large {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+            animation: avatarPulse 2.2s infinite ease-in-out;
+            flex-shrink: 0;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 98, 255, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 14px rgba(0, 98, 255, 0); }
+        }
+
+        .doc-title-info h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+
+        .doc-title-info p {
+            font-size: 0.82rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .doc-experience-badge {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: rgba(0, 208, 132, 0.15);
+            color: #00875A;
+        }
+
+        .doc-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .doc-detail-box {
+            background: rgba(241, 245, 249, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 10px 14px;
+            border-radius: 14px;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .doc-detail-box:hover {
+            transform: translateY(-2px);
+            background: rgba(230, 240, 255, 0.6);
+        }
+
+        .doc-detail-box label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .doc-detail-box span {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .doc-bio-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 12px;
+            border-left: 3px solid var(--primary-blue);
+            margin-bottom: 18px;
+        }
+
+        .doc-vitals-monitored {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .doc-vitals-monitored h4 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .vitals-pills-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .vital-pill-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 12px;
+            background: rgba(0, 98, 255, 0.08);
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .close-doc-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(226, 232, 240, 0.6);
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-doc-btn:hover {
+            background: #FF4D4D;
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* --- Patient Profile Animated Modal Styling --- */
+        .pat-modal-card {
+            background: linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%);
+            border-radius: 24px;
+            padding: 28px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(10, 25, 47, 0.4);
+            position: relative;
+            animation: patModalPop 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            overflow: hidden;
+        }
+
+        @keyframes patModalPop {
+            0% { opacity: 0; transform: scale(0.7) translateY(50px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .pat-avatar-large {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: top;
+            border: 4px solid var(--primary-blue);
+            box-shadow: 0 10px 24px rgba(0, 98, 255, 0.25);
+            animation: patAvatarGlow 2.5s infinite ease-in-out;
+            flex-shrink: 0;
+        }
+
+        @keyframes patAvatarGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 98, 255, 0.4); }
+            50% { box-shadow: 0 0 0 12px rgba(0, 98, 255, 0); }
+        }
+
+        /* Video Call Screen Styles */
+        .video-box {
+            width: 100%;
+            height: 240px;
+            background: #020617;
+            border-radius: 14px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-status-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.92);
+            color: #FF4D4D;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .video-status-overlay i {
+            font-size: 2.2rem;
+        }
+
+        .dashboard-footer {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .mobile-menu-toggle {
+            display: none !important;
+        }
+
+        /* --- Phone Responsive Core Styling (Phones <768px ONLY) --- */
+        @media (max-width: 767px) {
+            .app-container {
+                flex-direction: column !important;
+            }
+            .sidebar {
+                width: 100% !important;
+                position: relative !important;
+                height: auto !important;
+                padding: 10px 14px !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+                z-index: 1000 !important;
+            }
+            .brand-header {
+                padding: 4px 0 !important;
+            }
+            .sidebar-profile {
+                display: none !important;
+            }
+            .nav-menu {
+                display: none;
+                flex-direction: column !important;
+                gap: 4px !important;
+                margin-top: 8px !important;
+                background: #0f172a !important;
+                padding: 10px !important;
+                border-radius: 12px !important;
+            }
+            .nav-menu.mobile-open {
+                display: flex !important;
+            }
+            .mobile-menu-toggle {
+                display: flex !important;
+                align-items: center !important;
+                gap: 6px !important;
+                background: #2563eb !important;
+                color: #ffffff !important;
+                border: none !important;
+                padding: 6px 14px !important;
+                border-radius: 8px !important;
+                font-weight: 700 !important;
+                font-size: 0.85rem !important;
+                cursor: pointer !important;
+            }
+            .nav-item {
+                padding: 10px 14px !important;
+                font-size: 0.85rem !important;
+                border-radius: 10px !important;
+                width: 100% !important;
+            }
+            .main-content {
+                padding: 12px 10px 30px 10px !important;
+                width: 100% !important;
+            }
+            .vitals-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            .quick-actions-grid, .secondary-grid, .bottom-sections-grid, .priority-dashboard-grid, .action-strip-grid, .grid-3, .grid-4 {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+            .chart-main, .chart-side {
+                grid-column: span 12 !important;
+            }
+            .card, .page-card, .metric-card {
+                padding: 12px 14px !important;
+                border-radius: 12px !important;
+            }
+            .card-header-flex, .vital-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+            }
+            .page-title {
+                font-size: 1.15rem !important;
+                margin-bottom: 10px !important;
+            }
+            .hero-banner {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                padding: 14px !important;
+                gap: 10px !important;
+            }
+            table {
+                display: block !important;
+                width: 100% !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                white-space: nowrap !important;
+            }
+            th, td {
+                padding: 8px 10px !important;
+                font-size: 0.8rem !important;
+            }
+            .profile-card-modal, .modal-card, .doc-modal-card, .profile-modal {
+                width: 96% !important;
+                max-width: 100% !important;
+                padding: 14px !important;
+                margin: 10px auto !important;
+                max-height: 85vh !important;
+                overflow-y: auto !important;
+                border-radius: 16px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .vitals-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .action-btn, .btn-full {
+                width: 100% !important;
+                justify-content: center !important;
+                padding: 10px 12px !important;
+                font-size: 0.82rem !important;
+            }
+            .patient-tags-flex {
+                flex-wrap: wrap !important;
+                gap: 4px !important;
+            }
+            .patient-tag {
+                font-size: 0.72rem !important;
+                padding: 3px 8px !important;
+            }
+            .profile-info-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        .mobile-back-btn {
+            display: none !important;
+        }
+        @media (max-width: 767px) {
+            .mobile-back-btn {
+                display: none;
+                align-items: center !important;
+                gap: 8px !important;
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+                color: #38bdf8 !important;
+                border: 1px solid rgba(56, 189, 248, 0.3) !important;
+                padding: 10px 16px !important;
+                border-radius: 12px !important;
+                font-size: 0.85rem !important;
+                font-weight: 700 !important;
+                cursor: pointer !important;
+                margin-bottom: 14px !important;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+                transition: all 0.2s ease !important;
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            .mobile-back-btn:active {
+                transform: scale(0.98) !important;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-    <h2>🩺 Doctor Dashboard</h2>
-    <button>+ New Appointment</button>
-</header>
+    <div id="bg-three-container"></div>
 
-<div class="dashboard">
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
 
-<div class="left">
+    <div class="app-container">
+        
+        <aside class="sidebar">
+            <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                <div class="brand-header" onclick="window.location.href='index.html'" style="cursor:pointer;" title="Go to Landing Page (index.html)">
+                    <div class="brand-logo-container">
+                        <svg class="brand-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="mdv-grad-left" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#0062FF" />
+                                    <stop offset="100%" stop-color="#0284C7" />
+                                </linearGradient>
+                                <linearGradient id="mdv-grad-right" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#0EA5E9" />
+                                    <stop offset="100%" stop-color="#00D084" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M44 8H56V20H68V32H56V44H44V32H32V20H44V8Z" fill="#38BDF8"/>
+                            <path d="M15 25C15 21 19 18 23 21L48 44V78C48 83 42 86 38 83L18 68C16 66 15 64 15 61V25Z" fill="url(#mdv-grad-left)"/>
+                            <path d="M85 25C85 21 81 18 77 21L52 44V78C52 83 58 86 62 83L82 68C84 66 85 64 85 61V25Z" fill="url(#mdv-grad-right)"/>
+                            <path d="M25 60H38L44 48L50 72L56 54L62 60H75" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="brand-title-box">
+                        <span class="brand-name">Medivance</span>
+                        <span class="brand-tagline">Healthcare OS</span>
+                    </div>
+                </div>
+                <button onclick="toggleMobileSidebar()" class="mobile-menu-toggle" aria-label="Toggle Menu"><i class="fa-solid fa-bars"></i> Menu</button>
+            </div>
 
-<div class="box">
+            <div class="sidebar-profile" onclick="openPatientProfile()">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=250" alt="Vaibhav Barwal" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'50\' fill=\'%230062ff\'/><path d=\'M50 25a18 18 0 100 36 18 18 0 000-36zM25 80c0-14 11-25 25-25s25 11 25 25z\' fill=\'%23ffffff\'/></svg>';">
+                <div>
+                    <h4>Vaibhav Barwal</h4>
+                    <p>Patient ID: PAT-2024-9921</p>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="javascript:void(0)" class="nav-item active" onclick="switchPage(event, 'page-dashboard', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-appointments', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-calendar-check"></i> Book Appointment</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-doctors', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-user-doctor"></i> My Doctors</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-records', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-folder-open"></i> Medical Records</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-lab-reports', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-flask"></i> Lab Reports</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-prescriptions', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-file-prescription"></i> Prescriptions</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-billing', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-file-invoice-dollar"></i> Billing & Insurance</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-tracker', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-heart-pulse"></i> Health Tracker</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-reminders', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-bell"></i> Medicine Reminders</a>
+                <a href="javascript:void(0)" class="nav-item emergency" onclick="switchPage(event, 'page-emergency', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-truck-medical"></i> Emergency SOS</a>
+                <a href="javascript:void(0)" class="nav-item" onclick="switchPage(event, 'page-ambulance', this); return false;" style="cursor: pointer;"><i class="fa-solid fa-ambulance"></i> Ambulance Booking</a>
+                
+                <div class="nav-divider"></div>
 
-<h3>Overview</h3>
+                <a href="javascript:void(0)" class="nav-item logout" onclick="handleLogout(event); return false;" style="cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </nav>
+        </aside>
 
-<div class="stats">
+        <main class="main-wrapper">
+            
+            <button id="mobileBackToOverviewBtn" onclick="switchPage(event, 'page-dashboard')" class="mobile-back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard Overview
+            </button>
+            
+            <span class="date-subtitle">Friday, July 24, 2026</span>
 
-<div class="stat">
-<h3>210</h3>
-<p>Patients</p>
+            <div id="page-dashboard" class="page-section active-page">
+                <section class="hero-banner">
+                    <div class="patient-identity">
+                        <div class="hero-avatar-wrapper" onclick="openPatientProfile()">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=250" alt="Patient Profile" class="hero-avatar" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'50\' fill=\'%230062ff\'/><path d=\'M50 25a18 18 0 100 36 18 18 0 000-36zM25 80c0-14 11-25 25-25s25 11 25 25z\' fill=\'%23ffffff\'/></svg>';">
+                            <span class="online-status"></span>
+                        </div>
+                        <div class="hero-content">
+                            <h1>Welcome back, Vaibhav Barwal</h1>
+                            <p>Patient ID: PAT-2024-9921</p>
+                            <div class="patient-tags">
+                                <span class="patient-tag" onclick="openPatientProfile()"><i class="fa-solid fa-droplet" style="color: #FF4D4D;"></i> Blood: O+</span>
+                                <span class="patient-tag" onclick="openPatientProfile()"><i class="fa-solid fa-cake-candles"></i> 32 Yrs</span>
+                                <span class="patient-tag" onclick="openPatientProfile()"><i class="fa-solid fa-shield-heart"></i> Insured</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="next-appt-badge" onclick="openDoctorProfile('mkapoor')">
+                        <span class="dot"></span>
+                        <div>
+                            <strong style="display:block; font-size:0.75rem; color:#93C5FD;">Upcoming Visit</strong>
+                            <span>Today, 10:00 AM — Dr. Meera Kapoor</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bottom-sections-grid">
+                    <div class="card">
+                        <div class="card-header-flex">
+                            <h3>Today's Medicine Schedule</h3>
+                            <a href="#" class="view-all-link" onclick="switchPage(event, 'page-reminders', document.querySelectorAll('.nav-item')[8])">View schedule <i class="fa-solid fa-chevron-right" style="font-size:0.65rem;"></i></a>
+                        </div>
+
+                        <div class="list-stack">
+                            <div class="list-item" onclick="triggerMedReminder('Multivitamin Capsule', '08:00 AM (After Breakfast)')">
+                                <div class="item-left">
+                                    <div class="med-icon" style="background: #FCE7F3; color: #DB2777;">
+                                        <i class="fa-solid fa-capsules"></i>
+                                    </div>
+                                    <div class="item-info">
+                                        <h4>Multivitamin Capsule</h4>
+                                        <p>08:00 AM (After Breakfast)</p>
+                                    </div>
+                                </div>
+                                <div class="check-circle checked">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                            </div>
+
+                            <div class="list-item" onclick="triggerMedReminder('Amoxicillin 500mg', '02:00 PM (After Lunch)')">
+                                <div class="item-left">
+                                    <div class="med-icon" style="background: #FEF3C7; color: #D97706;">
+                                        <i class="fa-solid fa-tablets"></i>
+                                    </div>
+                                    <div class="item-info">
+                                        <h4>Amoxicillin 500mg</h4>
+                                        <p>02:00 PM (After Lunch)</p>
+                                    </div>
+                                </div>
+                                <div class="check-circle"></div>
+                            </div>
+
+                            <div class="list-item" onclick="triggerMedReminder('Omega-3 Fish Oil', '09:00 PM (After Dinner)')">
+                                <div class="item-left">
+                                    <div class="med-icon" style="background: #D1FAE5; color: #059669;">
+                                        <i class="fa-solid fa-pills"></i>
+                                    </div>
+                                    <div class="item-info">
+                                        <h4>Omega-3 Fish Oil</h4>
+                                        <p>09:00 PM (After Dinner)</p>
+                                    </div>
+                                </div>
+                                <div class="check-circle"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header-flex">
+                            <h3>My Scheduled Doctor Visits</h3>
+                            <a href="#" class="view-all-link" onclick="switchPage(event, 'page-appointments', document.querySelectorAll('.nav-item')[1])">View all <i class="fa-solid fa-chevron-right" style="font-size:0.65rem;"></i></a>
+                        </div>
+                        
+                        <div class="list-stack">
+                            <div class="list-item" onclick="openDoctorProfile('mkapoor')">
+                                <div class="item-left">
+                                    <div class="avatar-circle" style="background: #DBEAFE; color: #2563EB;" onclick="event.stopPropagation(); openDoctorProfile('mkapoor');">MK</div>
+                                    <div class="item-info">
+                                        <h4>Dr. Meera Kapoor</h4>
+                                        <p>Cardiology · Routine ECG Review</p>
+                                    </div>
+                                </div>
+                                <div class="item-right">
+                                    <div class="date-text">Jul 24, 2026</div>
+                                    <div class="time-text">10:00 AM</div>
+                                </div>
+                            </div>
+
+                            <div class="list-item" onclick="openDoctorProfile('rgupta')">
+                                <div class="item-left">
+                                    <div class="avatar-circle" style="background: #FCE7F3; color: #DB2777;" onclick="event.stopPropagation(); openDoctorProfile('rgupta');">RG</div>
+                                    <div class="item-info">
+                                        <h4>Dr. Rajesh Gupta</h4>
+                                        <p>General Medicine Checkup</p>
+                                    </div>
+                                </div>
+                                <div class="item-right">
+                                    <div class="date-text">Jul 29, 2026</div>
+                                    <div class="time-text">04:30 PM</div>
+                                </div>
+                            </div>
+
+                            <div class="list-item" onclick="openDoctorProfile('asen')">
+                                <div class="item-left">
+                                    <div class="avatar-circle" style="background: #F3E8FF; color: #9333EA;" onclick="event.stopPropagation(); openDoctorProfile('asen');">AS</div>
+                                    <div class="item-info">
+                                        <h4>Dr. Anaya Sen</h4>
+                                        <p>Dermatology Consultation</p>
+                                    </div>
+                                </div>
+                                <div class="item-right">
+                                    <div class="date-text">Aug 05, 2026</div>
+                                    <div class="time-text">11:15 AM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <h3 class="section-title">Quick Services</h3>
+                <section class="quick-actions-grid">
+                    <div class="action-card" onclick="switchPage(event, 'page-appointments', document.querySelectorAll('.nav-item')[1])">
+                        <div class="action-icon" style="background: #2563EB;"><i class="fa-solid fa-calendar-plus"></i></div>
+                        <span>Book<br>Appointment</span>
+                    </div>
+                    <div class="action-card" onclick="switchPage(event, 'page-lab-reports', document.querySelectorAll('.nav-item')[4])">
+                        <div class="action-icon" style="background: #10B981;"><i class="fa-solid fa-flask"></i></div>
+                        <span>Lab<br>Reports</span>
+                    </div>
+                    <div class="action-card" onclick="switchPage(event, 'page-prescriptions', document.querySelectorAll('.nav-item')[5])">
+                        <div class="action-icon" style="background: #8B5CF6;"><i class="fa-solid fa-pills"></i></div>
+                        <span>My<br>Prescriptions</span>
+                    </div>
+                    <div class="action-card" onclick="switchPage(event, 'page-emergency', document.querySelectorAll('.nav-item')[9])">
+                        <div class="action-icon" style="background: #EF4444;"><i class="fa-solid fa-bell"></i></div>
+                        <span>Emergency<br>SOS</span>
+                    </div>
+                    <div class="action-card" onclick="switchPage(event, 'page-ambulance', document.querySelectorAll('.nav-item')[10])">
+                        <div class="action-icon" style="background: #F97316;"><i class="fa-solid fa-truck-medical"></i></div>
+                        <span>Call<br>Ambulance</span>
+                    </div>
+                    <div class="action-card" onclick="switchPage(event, 'page-billing', document.querySelectorAll('.nav-item')[6])">
+                        <div class="action-icon" style="background: #0D9488;"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                        <span>Pay<br>Bills</span>
+                    </div>
+                    <div class="action-card" onclick="mvOpenCallPanel()">
+                        <div class="action-icon" style="background: #2563EB;"><i class="fa-solid fa-video"></i></div>
+                        <span>Video Call<br>Doctor</span>
+                    </div>
+                </section>
+
+                <h3 class="section-title">Current Health Status</h3>
+                <section class="vitals-grid">
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span>Heart Rate</span>
+                            <div class="vital-icon-box" style="background: rgba(255, 77, 77, 0.1); color: #FF4D4D;"><i class="fa-solid fa-heart"></i></div>
+                        </div>
+                        <div class="vital-body">
+                            <div class="vital-value">72 <small>bpm</small></div>
+                            <div class="vital-change up"><i class="fa-solid fa-check"></i> Normal Range</div>
+                        </div>
+                    </div>
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span>Blood Pressure</span>
+                            <div class="vital-icon-box" style="background: rgba(0, 98, 255, 0.1); color: #0062FF;"><i class="fa-solid fa-wave-square"></i></div>
+                        </div>
+                        <div class="vital-body">
+                            <div class="vital-value">120/80 <small>mmHg</small></div>
+                            <div class="vital-change">— Optimal</div>
+                        </div>
+                    </div>
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span>Blood Sugar</span>
+                            <div class="vital-icon-box" style="background: rgba(255, 159, 67, 0.1); color: #FF9F43;"><i class="fa-solid fa-droplet"></i></div>
+                        </div>
+                        <div class="vital-body">
+                            <div class="vital-value">98 <small>mg/dL</small></div>
+                            <div class="vital-change down"><i class="fa-solid fa-arrow-down"></i> Fasting Normal</div>
+                        </div>
+                    </div>
+                    <div class="card vital-card">
+                        <div class="vital-header">
+                            <span>O₂ Saturation</span>
+                            <div class="vital-icon-box" style="background: rgba(0, 208, 132, 0.1); color: #00D084;"><i class="fa-solid fa-lungs"></i></div>
+                        </div>
+                        <div class="vital-body">
+                            <div class="vital-value">99 <small>%</small></div>
+                            <div class="vital-change">— Excellent</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="analytics-grid">
+                    <div class="card chart-main">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3 id="chartTitle">Weekly Pulse Tracking</h3>
+                                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;" id="chartSub">Automated heart-rate sensor sync</p>
+                            </div>
+                            <div class="pill-tabs">
+                                <span class="pill-tab active" onclick="updateHealthChart('pulse', this)">Pulse</span>
+                                <span class="pill-tab" onclick="updateHealthChart('sugar', this)">Sugar</span>
+                                <span class="pill-tab" onclick="updateHealthChart('o2', this)">O₂</span>
+                            </div>
+                        </div>
+                        <canvas id="healthTrendChart" height="110"></canvas>
+                    </div>
+
+                    <div class="card chart-side">
+                        <div class="card-header-flex">
+                            <div>
+                                <h3>Fitness & Steps</h3>
+                                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Goal: 8,000 steps</p>
+                            </div>
+                            <span class="percentage-badge">+15%</span>
+                        </div>
+                        <canvas id="stepsChart" height="180"></canvas>
+                    </div>
+                </section>
+            </div>
+
+            <div id="page-appointments" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-calendar-check" style="color:var(--primary-blue);"></i> Book OPD Appointment</h2>
+                <div id="bookingConfirmationCard" style="display:none; margin-bottom:20px;"></div>
+                <div class="card" style="background: rgba(255,255,255,0.9); padding: 24px; border-radius: 16px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+                    <form onsubmit="handleBookAppointment(event)" style="max-width: 650px; display: grid; gap: 16px;">
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-weight:700; color: var(--text-dark);">Select Specialist Doctor</label>
+                            <select id="bookDoctor" required onchange="autoFillSpecialty(this)" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border-color); background: #fff; font-size:0.95rem;">
+                                <option value="Dr. Meera Kapoor" data-specialty="Cardiology">Dr. Meera Kapoor (Cardiology · OPD 302)</option>
+                                <option value="Dr. Rajesh Gupta" data-specialty="General Medicine">Dr. Rajesh Gupta (General Medicine · OPD 205)</option>
+                                <option value="Dr. Ananya Sen" data-specialty="Dermatology">Dr. Ananya Sen (Dermatology · OPD 410)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-weight:700; color: var(--text-dark);">Specialty / Department</label>
+                            <input type="text" id="bookSpecialty" value="Cardiology" placeholder="e.g. Cardiology" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border-color); font-size:0.95rem;">
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                            <div>
+                                <label style="display:block; margin-bottom:6px; font-weight:700; color: var(--text-dark);">Appointment Date</label>
+                                <input type="date" id="bookDate" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border-color); font-size:0.95rem;">
+                            </div>
+                            <div>
+                                <label style="display:block; margin-bottom:6px; font-weight:700; color: var(--text-dark);">Preferred Time Slot</label>
+                                <select id="bookTime" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border-color); background: #fff; font-size:0.95rem;">
+                                    <option value="09:00 AM">09:00 AM</option>
+                                    <option value="10:00 AM">10:00 AM</option>
+                                    <option value="11:30 AM">11:30 AM</option>
+                                    <option value="02:00 PM">02:00 PM</option>
+                                    <option value="04:00 PM">04:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom:6px; font-weight:700; color: var(--text-dark);">Reason for Visit / Symptoms</label>
+                            <textarea id="bookNotes" rows="3" placeholder="Describe symptoms or medical reason for consultation..." style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border-color); font-size:0.95rem;"></textarea>
+                        </div>
+                        <button type="submit" id="submitBookingBtn" class="action-btn" style="width:100%; padding: 14px 24px; font-size:1rem; background: linear-gradient(135deg, #0062ff 0%, #00d084 100%); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:800; box-shadow:0 8px 20px rgba(0,98,255,0.25);">
+                            <i class="fa-solid fa-calendar-check" style="margin-right:8px;"></i> Confirm & Book Slot Now
+                        </button>
+                    </form>
+                </div>
+                <div class="card" style="margin-top: 20px; background: rgba(255,255,255,0.9); padding: 24px; border-radius: 16px;">
+                    <h3 style="font-size:1.1rem; font-weight:700; color: var(--text-dark); margin-bottom:15px;">My Active & Past Appointments</h3>
+                    <div id="appointmentsList">Loading appointments...</div>
+                </div>
+            </div>
+
+            <div id="page-doctors" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-user-doctor" style="color:var(--primary-blue);"></i> Specialist Medical Team</h2>
+                <div class="grid-3" style="margin-top:16px;">
+                    <div class="card" style="background:#fff; border-radius:16px; padding:20px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+                        <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, #0062ff, #00d084); color:#fff; font-size:1.6rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">MK</div>
+                        <h3 style="font-size:1.1rem; margin:0; font-weight:800; color:#1e293b;">Dr. Meera Kapoor</h3>
+                        <p style="font-size:0.85rem; color:#0284c7; font-weight:700; margin:2px 0 6px 0;">Cardiology Specialist</p>
+                        <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">15+ Years Exp · MD, DM Cardiology</p>
+                        <button class="action-btn" onclick="quickBookDoctor('Dr. Meera Kapoor', 'Cardiology')" style="width:100%; padding:10px; background:#0062ff; color:#fff; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Book Consultation (₹1,200)</button>
+                    </div>
+                    <div class="card" style="background:#fff; border-radius:16px; padding:20px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+                        <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, #0d9488, #10b981); color:#fff; font-size:1.6rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">RG</div>
+                        <h3 style="font-size:1.1rem; margin:0; font-weight:800; color:#1e293b;">Dr. Rajesh Gupta</h3>
+                        <p style="font-size:0.85rem; color:#0d9488; font-weight:700; margin:2px 0 6px 0;">General Medicine</p>
+                        <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">20+ Years Exp · MS Ortho</p>
+                        <button class="action-btn" onclick="quickBookDoctor('Dr. Rajesh Gupta', 'General Medicine')" style="width:100%; padding:10px; background:#0d9488; color:#fff; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Book Consultation (₹800)</button>
+                    </div>
+                    <div class="card" style="background:#fff; border-radius:16px; padding:20px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+                        <div style="width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg, #8b5cf6, #ec4899); color:#fff; font-size:1.6rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">AS</div>
+                        <h3 style="font-size:1.1rem; margin:0; font-weight:800; color:#1e293b;">Dr. Ananya Sen</h3>
+                        <p style="font-size:0.85rem; color:#8b5cf6; font-weight:700; margin:2px 0 6px 0;">Dermatology & Neuro</p>
+                        <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">12+ Years Exp · MD, DM Neurology</p>
+                        <button class="action-btn" onclick="quickBookDoctor('Dr. Ananya Sen', 'Dermatology')" style="width:100%; padding:10px; background:#8b5cf6; color:#fff; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Book Consultation (₹1,000)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-records" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-folder-open" style="color:var(--primary-blue);"></i> Electronic Health Records (EHR)</h2>
+                <div class="card" style="background:#fff; padding:24px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="font-size:1.1rem; font-weight:700; margin:0; color:#1e293b;">Medical Documents & History</h3>
+                        <button class="action-btn" onclick="document.getElementById('uploadRecordModal').style.display='flex';" style="padding:8px 16px; background:#0062ff; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">+ Upload Record</button>
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; text-align:left;">
+                        <thead>
+                            <tr style="border-bottom:1px solid #e2e8f0; color:#64748b; font-size:0.85rem;">
+                                <th style="padding:10px;">Document Title</th>
+                                <th>Category</th>
+                                <th>Date Uploaded</th>
+                                <th>Doctor / Facility</th>
+                                <th style="text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid #f1f5f9; font-size:0.9rem;">
+                                <td style="padding:12px; font-weight:700; color:#1e293b;"><i class="fa-solid fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i>Annual Health Examination Summary</td>
+                                <td>General OPD</td>
+                                <td>July 20, 2026</td>
+                                <td>Dr. Meera Kapoor</td>
+                                <td style="text-align:right;"><button class="action-btn" onclick="downloadRecordPDF('Annual Health Examination Summary')" style="padding:6px 12px; background:#0284c7; color:#fff; border:none; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;"><i class="fa-solid fa-download"></i> Download PDF</button></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid #f1f5f9; font-size:0.9rem;">
+                                <td style="padding:12px; font-weight:700; color:#1e293b;"><i class="fa-solid fa-heart-pulse" style="color:#0062ff; margin-right:8px;"></i>12-Lead Electrocardiogram (ECG) Report</td>
+                                <td>Cardiology</td>
+                                <td>July 15, 2026</td>
+                                <td>MediVance Diagnostic Lab</td>
+                                <td style="text-align:right;"><button class="action-btn" onclick="downloadRecordPDF('12-Lead Electrocardiogram (ECG) Report')" style="padding:6px 12px; background:#0284c7; color:#fff; border:none; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;"><i class="fa-solid fa-download"></i> Download PDF</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="page-lab-reports" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-flask-vial" style="color:#8b5cf6;"></i> Laboratory Test Results</h2>
+                <div class="card" style="background:#fff; padding:24px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+                    <table style="width:100%; border-collapse:collapse; text-align:left;">
+                        <thead>
+                            <tr style="border-bottom:1px solid #e2e8f0; color:#64748b; font-size:0.85rem;">
+                                <th style="padding:10px;">Barcode ID</th>
+                                <th>Test Name</th>
+                                <th>Collection Date</th>
+                                <th>Status</th>
+                                <th style="text-align:right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid #f1f5f9; font-size:0.9rem;">
+                                <td style="padding:12px; font-weight:700; color:#1e293b;">#BAR-20240301</td>
+                                <td>Complete Blood Count (CBC)</td>
+                                <td>July 22, 2026 · 09:15 AM</td>
+                                <td><span style="background:#dcfce7; color:#15803d; padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">Completed</span></td>
+                                <td style="text-align:right;"><button class="action-btn" onclick="downloadLabReport('Complete Blood Count (CBC)', 'BAR-20240301')" style="padding:6px 12px; background:#8b5cf6; color:#fff; border:none; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;"><i class="fa-solid fa-download"></i> Download Report</button></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid #f1f5f9; font-size:0.9rem;">
+                                <td style="padding:12px; font-weight:700; color:#1e293b;">#BAR-20240302</td>
+                                <td>Lipid Profile & Troponin I</td>
+                                <td>July 23, 2026 · 10:30 AM</td>
+                                <td><span style="background:#fef3c7; color:#d97706; padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">Processing</span></td>
+                                <td style="text-align:right;"><button class="action-btn" onclick="showNotification('Lab processing in progress at Pathology Lab.', 'info')" style="padding:6px 12px; background:#64748b; color:#fff; border:none; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;">View Status</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="page-prescriptions" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-file-prescription" style="color:var(--primary-blue);"></i> My Active Prescriptions</h2>
+                <div class="card" style="background: rgba(255,255,255,0.9); padding: 24px; border-radius: 16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-dark); margin:0;">Doctor Prescribed Directives</h3>
+                        <button onclick="document.getElementById('addMedicineModal').style.display='flex';" style="padding:8px 16px; background:#0062ff; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.85rem;"><i class="fa-solid fa-plus"></i> + Add Custom Medicine</button>
+                    </div>
+                    <div id="patientPrescriptionsList">Loading prescriptions...</div>
+                </div>
+            </div>
+
+            <div id="page-billing" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-file-invoice-dollar" style="color:#10b981;"></i> Billing Statements & Payment Desk</h2>
+                <div class="card" style="background: rgba(255,255,255,0.9); padding: 24px; border-radius: 16px;">
+                    <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-dark); margin-bottom:15px;">Invoices & Online Clearance</h3>
+                    <div id="patientBillingList">Loading invoices...</div>
+                </div>
+            </div>
+
+            <div id="page-tracker" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-heart-pulse" style="color:#00d084;"></i> Daily Vitals & Health Tracker</h2>
+                <div class="card" style="background:#fff; padding:24px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+                    <h3 style="font-size:1.1rem; font-weight:700; color:#1e293b; margin-bottom:14px;">Log Personal Health Vitals</h3>
+                    <form onsubmit="handleLogPersonalVitals(event)" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+                        <div>
+                            <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Blood Pressure (mmHg)</label>
+                            <input type="text" id="trackBp" placeholder="120/80" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+                        </div>
+                        <div>
+                            <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Heart Rate (BPM)</label>
+                            <input type="number" id="trackHr" placeholder="72" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+                        </div>
+                        <div>
+                            <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Blood Sugar (mg/dL)</label>
+                            <input type="number" id="trackSugar" placeholder="98" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+                        </div>
+                        <button type="submit" style="grid-column:span 3; padding:12px; background:#00d084; color:#fff; border:none; border-radius:10px; font-weight:800; cursor:pointer; margin-top:6px;">Update Daily Health Tracker Log</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="page-reminders" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-bell" style="color:#f59e0b;"></i> Daily Medicine Pill Schedule</h2>
+                <div class="grid-3" style="margin-top:16px;">
+                    <div class="card" style="background:#fff; padding:20px; border-radius:16px; border-top:4px solid #0062ff; transition:all 0.3s ease;">
+                        <h4 style="font-size:1rem; margin:0; color:#1e293b;"><i class="fa-solid fa-pills" style="color:#0062ff;"></i> Multivitamin Supplement</h4>
+                        <p style="font-size:0.85rem; color:#64748b; margin:4px 0 10px 0;">1 Tablet · Every Morning (08:00 AM)</p>
+                        <button class="action-btn" onclick="markMedicineTaken(this, 'Multivitamin Supplement')" style="width:100%; padding:8px; background:#0062ff; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Mark Taken</button>
+                    </div>
+                    <div class="card" style="background:#fff; padding:20px; border-radius:16px; border-top:4px solid #0d9488; transition:all 0.3s ease;">
+                        <h4 style="font-size:1rem; margin:0; color:#1e293b;"><i class="fa-solid fa-capsules" style="color:#0d9488;"></i> Omega-3 Fish Oil 1000mg</h4>
+                        <p style="font-size:0.85rem; color:#64748b; margin:4px 0 10px 0;">1 Softgel · Afternoon (01:00 PM)</p>
+                        <button class="action-btn" onclick="markMedicineTaken(this, 'Omega-3 Fish Oil')" style="width:100%; padding:8px; background:#0d9488; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Mark Taken</button>
+                    </div>
+                    <div class="card" style="background:#fff; padding:20px; border-radius:16px; border-top:4px solid #8b5cf6; transition:all 0.3s ease;">
+                        <h4 style="font-size:1rem; margin:0; color:#1e293b;"><i class="fa-solid fa-tablets" style="color:#8b5cf6;"></i> Amoxicillin 500mg Antibiotic</h4>
+                        <p style="font-size:0.85rem; color:#64748b; margin:4px 0 10px 0;">1 Capsule · Night (09:00 PM)</p>
+                        <button class="action-btn" onclick="markMedicineTaken(this, 'Amoxicillin Antibiotic')" style="width:100%; padding:8px; background:#8b5cf6; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Mark Taken</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-emergency" class="page-section">
+                <h2 class="page-title" style="color: var(--accent-red);"><i class="fa-solid fa-triangle-exclamation"></i> Emergency SOS Protocol</h2>
+                <div class="card" style="border: 2px solid rgba(255, 77, 77, 0.4); background:#fff; padding:24px; border-radius:16px; text-align:center;">
+                    <i class="fa-solid fa-truck-medical" style="font-size:3rem; color:#ef4444; margin-bottom:12px;"></i>
+                    <h3 style="font-size:1.3rem; font-weight:800; color:#b91c1c; margin:0;">MediVance Rapid Emergency SOS</h3>
+                    <p style="font-size:0.9rem; color:#64748b; margin:6px 0 20px 0;">Instantly broadcasts your GPS location & emergency protocol to the hospital response team.</p>
+                    <button class="action-btn" onclick="triggerPatientEmergencySOS()" style="padding:16px 36px; font-size:1.1rem; background:linear-gradient(135deg, #dc2626, #991b1b); color:#fff; border:none; border-radius:12px; font-weight:800; cursor:pointer; box-shadow:0 10px 25px rgba(220,38,38,0.4);">
+                        🚨 TRIGGER EMERGENCY SOS NOW
+                    </button>
+                </div>
+            </div>
+
+            <div id="page-ambulance" class="page-section">
+                <h2 class="page-title"><i class="fa-solid fa-ambulance" style="color:var(--primary-blue);"></i> Request Emergency Ambulance</h2>
+                <div class="card" style="background:#fff; padding:24px; border-radius:16px; max-width:600px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
+                    <form onsubmit="handleAmbulanceRequest(event)" style="display:grid; gap:14px;">
+                        <div>
+                            <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Pickup Location Address</label>
+                            <input type="text" id="ambAddress" required placeholder="Enter current street address or landmark..." value="Flat 402, Block B, Green Park Apartments" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+                        </div>
+                        <div>
+                            <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Ambulance Type</label>
+                            <select id="ambType" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+                                <option value="Basic Life Support (BLS)">Basic Life Support (BLS)</option>
+                                <option value="Advanced Cardiac Life Support (ACLS)">Advanced Cardiac Life Support (ACLS)</option>
+                                <option value="Trauma Mobile ICU">Trauma Mobile ICU</option>
+                            </select>
+                        </div>
+                        <button type="submit" style="padding:12px; background:#0062ff; color:#fff; border:none; border-radius:10px; font-weight:800; cursor:pointer; margin-top:6px;">Dispatch Nearest Ambulance (108)</button>
+                    </form>
+                </div>
+            </div>
+
+            <footer class="dashboard-footer">
+                © 2026 Medivance Health Systems · Encrypted & HIPAA Compliant · v4.2.1
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Medicine Reminder Popup Modal -->
+    <div class="modal-overlay" id="reminderModal">
+        <div class="modal-card">
+            <div class="modal-icon-badge">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+            <h3 style="font-size: 1.2rem; color: var(--primary-dark);" id="medModalTitle">Medicine Reminder</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;" id="medModalBody">Time to take your scheduled dose!</p>
+            <button class="modal-btn" onclick="closeMedReminder()">Mark as Taken</button>
+        </div>
+    </div>
+
+    <!-- Video Call Modal -->
+    <div class="modal-overlay" id="videoCallModal">
+        <div class="modal-card" style="max-width: 500px;">
+            <h3 style="margin-bottom: 12px; font-size: 1.1rem; text-align: left;">
+                <i class="fa-solid fa-video" style="color: var(--primary-blue);"></i> Video Consultation
+            </h3>
+            <div class="video-box">
+                <div class="video-status-overlay" id="callEndedOverlay">
+                    <i class="fa-solid fa-phone-slash"></i>
+                    <span>Call Ended</span>
+                </div>
+                <div style="color: #94A3B8; font-size: 0.9rem;" id="videoPlaceholder">
+                    <i class="fa-solid fa-user-doctor" style="font-size: 2rem; margin-bottom: 8px; display: block;"></i>
+                    Connecting to Dr. Meera Kapoor...
+                </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; justify-content: center; gap: 12px;">
+                <button class="modal-btn" style="background: var(--accent-red);" onclick="mvEndCall()">
+                    <i class="fa-solid fa-phone-slash"></i> End Call
+                </button>
+                <button class="modal-btn" style="background: #64748B;" onclick="closeCallModal()">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Profile Animated Modal -->
+    <div class="modal-overlay" id="doctorProfileModal" onclick="if(event.target === this) closeDoctorProfile();">
+        <div class="doc-modal-card">
+            <button class="close-doc-btn" onclick="closeDoctorProfile()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="doc-modal-header">
+                <div class="doc-avatar-large" id="docAvatarBg">
+                    <span id="docInitials">MK</span>
+                </div>
+                <div class="doc-title-info">
+                    <h3 id="docName">Dr. Meera Kapoor</h3>
+                    <p id="docDept">Senior Cardiologist</p>
+                    <span class="doc-experience-badge" id="docExp">14+ Years Experience</span>
+                </div>
+            </div>
+
+            <div class="doc-bio-text" id="docBio">
+                Specializes in non-invasive cardiology, preventive cardiac care, and digital arrhythmia monitoring.
+            </div>
+
+            <div class="doc-details-grid">
+                <div class="doc-detail-box">
+                    <label>Qualification</label>
+                    <span id="docQual">MD, DM (Cardiology)</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Hospital Affiliation</label>
+                    <span id="docHosp">Medivance Heart Ctr</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Consultation Fee</label>
+                    <span id="docFee">₹1,200</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Contact Direct</label>
+                    <span id="docContact">+91 98201 12345</span>
+                </div>
+            </div>
+
+            <div class="doc-vitals-monitored">
+                <h4>Primary Patient Vitals Monitored</h4>
+                <div class="vitals-pills-list" id="docVitalsList">
+                    <span class="vital-pill-tag"><i class="fa-solid fa-heart" style="color: #FF4D4D;"></i> Heart Rate Target (60-90 bpm)</span>
+                    <span class="vital-pill-tag"><i class="fa-solid fa-wave-square" style="color: #0062FF;"></i> BP Range (120/80 mmHg)</span>
+                    <span class="vital-pill-tag"><i class="fa-solid fa-lungs" style="color: #00D084;"></i> Oxygen Saturation (>=98%)</span>
+                </div>
+            </div>
+
+            <button class="modal-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="closeDoctorProfile(); mvOpenCallPanel();">
+                <i class="fa-solid fa-video"></i> Start Video Consultation
+            </button>
+        </div>
+    </div>
+
+    <!-- Patient Profile Animated Modal -->
+    <div class="modal-overlay" id="patientProfileModal" onclick="if(event.target === this) closePatientProfile();">
+        <div class="pat-modal-card">
+            <button class="close-doc-btn" onclick="closePatientProfile()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="doc-modal-header">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=250" alt="Vaibhav Barwal" class="pat-avatar-large" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'50\' fill=\'%230062ff\'/><path d=\'M50 25a18 18 0 100 36 18 18 0 000-36zM25 80c0-14 11-25 25-25s25 11 25 25z\' fill=\'%23ffffff\'/></svg>';">
+                <div class="doc-title-info">
+                    <h3>Vaibhav Barwal</h3>
+                    <p style="color: var(--text-muted); font-size:0.82rem;">ID: PAT-2024-9921</p>
+                    <span class="doc-experience-badge" style="background: rgba(0, 98, 255, 0.15); color: var(--primary-blue);">Primary Account Holder</span>
+                </div>
+            </div>
+
+            <div class="doc-details-grid">
+                <div class="doc-detail-box">
+                    <label>Age & DOB</label>
+                    <span>32 Yrs (14 Aug 1993)</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Gender</label>
+                    <span>Male</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Blood Group</label>
+                    <span style="color: #FF4D4D;"><i class="fa-solid fa-droplet"></i> O Positive (O+)</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Height & Weight</label>
+                    <span>178 cm / 74 kg</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Insurance Status</label>
+                    <span style="color: #00875A;"><i class="fa-solid fa-circle-check"></i> Active Policy</span>
+                </div>
+                <div class="doc-detail-box">
+                    <label>Emergency Contact</label>
+                    <span>+91 98765 43210</span>
+                </div>
+            </div>
+
+            <div class="doc-bio-text" style="border-left-color: var(--accent-green);">
+                <strong>Primary Care Doctor:</strong> Dr. Meera Kapoor (Cardiology)<br>
+                <strong>Known Allergies:</strong> Penicillin (Mild sensitivity)
+            </div>
+
+            <div class="doc-vitals-monitored">
+                <h4>Recent Vitals Snapshot</h4>
+                <div class="vitals-pills-list">
+                    <span class="vital-pill-tag"><i class="fa-solid fa-heart" style="color: #FF4D4D;"></i> Heart Rate: 72 bpm</span>
+                    <span class="vital-pill-tag"><i class="fa-solid fa-wave-square" style="color: #0062FF;"></i> BP: 120/80 mmHg</span>
+                    <span class="vital-pill-tag"><i class="fa-solid fa-droplet" style="color: #FF9F43;"></i> Sugar: 98 mg/dL</span>
+                    <span class="vital-pill-tag"><i class="fa-solid fa-lungs" style="color: #00D084;"></i> SpO2: 99%</span>
+                </div>
+            </div>
+
+            <button class="modal-btn" style="width: 100%;" onclick="closePatientProfile(); switchPage(event, 'page-records', document.querySelectorAll('.nav-item')[3]);">
+                <i class="fa-solid fa-folder-open"></i> View Complete Medical History
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000';
+            const token = await getOrFetchToken();
+            
+            async function loadDashboardData() {
+                if (!token) return;
+                try {
+                    const res = await fetch(API_BASE + '/api/patients/dashboard', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        const vitals = data.data.vitals;
+                        if (vitals) {
+                            const heartRateEl = document.querySelector('.vital-card:nth-child(1) .vital-value');
+                            if (heartRateEl && vitals.heartRate) heartRateEl.innerHTML = `${vitals.heartRate} <small>bpm</small>`;
+                        }
+                    }
+                } catch (err) {
+                    console.log('Using default dashboard data');
+                }
+            }
+            loadDashboardData();
+            loadDoctorsDropdown();
+            loadPatientAppointments();
+            loadPatientPrescriptions();
+            loadPatientBilling();
+        });
+
+        async function getOrFetchToken() {
+            const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000';
+            let token = localStorage.getItem('medivance_token');
+            if (!token) {
+                try {
+                    const res = await fetch(API_BASE + '/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: 'patient@medivance.com', password: 'Password123!', role: 'patient' })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        localStorage.setItem('medivance_token', data.token);
+                        localStorage.setItem('medivance_user', JSON.stringify(data.user));
+                        token = data.token;
+                    }
+                } catch(e) {}
+            }
+            return token;
+        }
+
+        async function loadDoctorsDropdown() {
+            const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000';
+            const selectEl = document.getElementById('bookDoctor');
+            if (!selectEl) return;
+            try {
+                const res = await fetch(API_BASE + '/api/doctors/list');
+                const data = await res.json();
+                if (data.success && data.data.length > 0) {
+                    selectEl.innerHTML = data.data.map(d => `<option value="${d.fullName}" data-specialty="${d.profile ? d.profile.specialty || 'Cardiology' : 'Cardiology'}">${d.fullName} (${d.profile ? d.profile.specialty || 'Specialist' : 'Specialist'})</option>`).join('');
+                } else {
+                    selectEl.innerHTML = `
+                        <option value="Dr. Meera Kapoor" data-specialty="Cardiology">Dr. Meera Kapoor (Cardiology · OPD 302)</option>
+                        <option value="Dr. Rajesh Gupta" data-specialty="General Medicine">Dr. Rajesh Gupta (General Medicine · OPD 205)</option>
+                        <option value="Dr. Ananya Sen" data-specialty="Dermatology">Dr. Ananya Sen (Dermatology · OPD 410)</option>
+                    `;
+                }
+            } catch(e) {
+                selectEl.innerHTML = `
+                    <option value="Dr. Meera Kapoor" data-specialty="Cardiology">Dr. Meera Kapoor (Cardiology · OPD 302)</option>
+                    <option value="Dr. Rajesh Gupta" data-specialty="General Medicine">Dr. Rajesh Gupta (General Medicine · OPD 205)</option>
+                    <option value="Dr. Ananya Sen" data-specialty="Dermatology">Dr. Ananya Sen (Dermatology · OPD 410)</option>
+                `;
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            let container = document.getElementById('toastNotificationContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastNotificationContainer';
+                container.style.cssText = 'position:fixed; top:20px; right:20px; z-index:10000; display:flex; flex-direction:column; gap:10px; pointer-events:none;';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.style.cssText = `pointer-events:auto; padding:12px 20px; border-radius:12px; font-weight:700; font-size:0.88rem; box-shadow:0 10px 25px rgba(0,0,0,0.15); display:flex; align-items:center; gap:10px; color:#fff; background:${type==='error'?'#ef4444':type==='warning'?'#f59e0b':type==='info'?'#0284c7':'#10b981'}; transition:all 0.3s ease; transform:translateY(-10px); opacity:0;`;
+            toast.innerHTML = `<i class="fa-solid ${type==='error'?'fa-circle-xmark':type==='warning'?'fa-triangle-exclamation':type==='info'?'fa-circle-info':'fa-circle-check'}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.transform = 'translateY(0)';
+                toast.style.opacity = '1';
+            }, 50);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function autoFillSpecialty(selectEl) {
+            if (!selectEl) return;
+            const opt = selectEl.options[selectEl.selectedIndex];
+            const spec = opt.getAttribute('data-specialty') || 'Cardiology';
+            const specInput = document.getElementById('bookSpecialty');
+            if (specInput) specInput.value = spec;
+        }
+
+        function quickBookDoctor(docName, specialty) {
+            switchPage(null, 'page-appointments', document.querySelectorAll('.nav-item')[1]);
+            const selectEl = document.getElementById('bookDoctor');
+            if (selectEl) {
+                for (let i = 0; i < selectEl.options.length; i++) {
+                    if (selectEl.options[i].text.includes(docName) || selectEl.options[i].value.includes(docName)) {
+                        selectEl.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            const specInput = document.getElementById('bookSpecialty');
+            if (specInput) specInput.value = specialty;
+            showNotification(`Selected ${docName} (${specialty}). Choose your slot and click Confirm!`, 'info');
+        }
+
+        function handleLogPersonalVitals(e) {
+            e.preventDefault();
+            const bp = document.getElementById('trackBp').value;
+            const hr = document.getElementById('trackHr').value;
+            const sugar = document.getElementById('trackSugar').value;
+            showNotification(`✅ Health Vitals Logged: BP ${bp}, Heart Rate ${hr} BPM, Sugar ${sugar} mg/dL`, 'success');
+        }
+
+        function triggerPatientEmergencySOS() {
+            const confirmed = confirm("🚨 ARE YOU SURE YOU WANT TO TRIGGER EMERGENCY SOS FOR YOUR LOCATION?");
+            if (!confirmed) return;
+            showNotification("🚨 Emergency SOS Broadcasted! Ambulance (108) & ER Desk Notified!", "error");
+            let banner = document.getElementById('activeEmergencyBanner');
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'activeEmergencyBanner';
+                banner.style.cssText = 'background:linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color:#fff; padding:12px 20px; text-align:center; font-weight:800; font-size:0.9rem; letter-spacing:0.5px; box-shadow:0 4px 15px rgba(239, 68, 68, 0.4); margin-bottom:15px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:10px; animation:pulse 2s infinite;';
+                const mainWrapper = document.querySelector('.main-wrapper');
+                if (mainWrapper) mainWrapper.insertBefore(banner, mainWrapper.firstChild);
+            }
+            banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ACTIVE EMERGENCY SOS: PATIENT LOCATION & ER DESK NOTIFIED`;
+        }
+
+        function handleAmbulanceRequest(e) {
+            e.preventDefault();
+            const addr = document.getElementById('ambAddress').value;
+            const type = document.getElementById('ambType').value;
+            showNotification(`🚑 ${type} Ambulance dispatched to ${addr}!`, 'success');
+        }
+
+        async function loadPatientAppointments() {
+            const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000';
+            const listEl = document.getElementById('appointmentsList');
+            if (!listEl) return;
+            const token = await getOrFetchToken();
+            try {
+                const res = await fetch(API_BASE + '/api/appointments', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success && data.data.length > 0) {
+                    listEl.innerHTML = '<table style="width:100%; border-collapse:collapse; text-align:left;">' +
+                        '<tr style="border-bottom:1px solid #eee;"><th style="padding:10px;">Token</th><th>Doctor</th><th>Specialty</th><th>Time</th><th>Status</th></tr>' +
+                        data.data.map(a => `<tr style="border-bottom:1px solid #f5f5f5;"><td style="padding:10px; font-weight:700;">${a.tokenNumber}</td><td>${a.doctor ? a.doctor.fullName : 'Doctor'}</td><td>${a.specialty || 'General'}</td><td>${a.timeSlot || '09:00 AM'}</td><td><span style="padding:4px 8px; border-radius:12px; font-size:0.8rem; background:#e6f7ff; color:#0070f3;">${a.status}</span></td></tr>`).join('') +
+                        '</table>';
+                } else {
+                    listEl.innerHTML = '<p style="color:#777;">No appointments found.</p>';
+                }
+            } catch(e) {
+                listEl.innerHTML = '<p style="color:#777;">Unable to load appointments.</p>';
+            }
+        }
+
+        async function handleBookAppointment(event) {
+            event.preventDefault();
+            const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:5000';
+            const token = await getOrFetchToken();
+            const doctorId = document.getElementById('bookDoctor').value;
+            const specialty = document.getElementById('bookSpecialty').value;
+            const date = document.getElementById('bookDate').value;
+            const timeSlot = document.getElementById('bookTime').value;
+            const notes = document.getElementById('bookNotes').value;
+
+            try {
+                const res = await fetch(API_BASE + '/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ doctorId, specialty, date, timeSlot, notes })
+                });
+                const data = await res.json();
+                const tokenNum = (data.data && data.data.tokenNumber) ? data.data.tokenNumber : 'TKN-' + Math.floor(100 + Math.random()*900);
+                
+                const card = document.getElementById('bookingConfirmationCard');
+                if (card) {
+                    card.style.display = 'block';
+                    card.innerHTML = `
+                        <div style="background: linear-gradient(135deg, #e6fffa 0%, #ebf8ff 100%); border: 1px solid #b2f5ea; padding: 24px; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0, 208, 132, 0.15); display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <i class="fa-solid fa-circle-check" style="font-size: 2.2rem; color: #38b2ac;"></i>
+                                <div>
+                                    <h3 style="font-size: 1.3rem; font-weight: 800; color: #234e52; margin:0;">Booking Confirmed!</h3>
+                                    <p style="font-size: 0.85rem; color: #2c7a7b; margin: 2px 0 0 0;">Your appointment has been registered with the doctor's live OPD queue.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 20px; background: rgba(255,255,255,0.85); padding: 16px; border-radius: 12px; width: 100%; margin-top: 5px;">
+                                <div><span style="font-size:0.75rem; color:#718096; display:block; text-transform:uppercase; font-weight:700;">Token Number</span><span style="font-size:1.3rem; font-weight:800; color:#2b6cb0;">${tokenNum}</span></div>
+                                <div><span style="font-size:0.75rem; color:#718096; display:block; text-transform:uppercase; font-weight:700;">Specialty</span><span style="font-size:0.95rem; font-weight:700; color:#2d3748;">${specialty}</span></div>
+                                <div><span style="font-size:0.75rem; color:#718096; display:block; text-transform:uppercase; font-weight:700;">Time Slot</span><span style="font-size:0.95rem; font-weight:700; color:#2d3748;">${timeSlot}</span></div>
+                            </div>
+                            <button onclick="document.getElementById('bookingConfirmationCard').style.display='none';" style="margin-top:5px; align-self:flex-start; padding:8px 18px; background:#38b2ac; color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Book Another Slot</button>
+                        </div>
+                    `;
+                }
+                loadPatientAppointments();
+            } catch(e) {
+                console.log('Error booking appointment', e);
+            }
+        }
+
+        function downloadRecordPDF(title) {
+            showNotification(`⬇️ Downloading ${title}.pdf (Vault Document)...`, 'success');
+            const a = document.createElement('a');
+            a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(`MediVance Health Vault Record\nTitle: ${title}\nPatient: Vaibhav Barwal (PAT-9921)\nDate: ${new Date().toLocaleDateString()}`);
+            a.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_Record.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function downloadLabReport(testName, barcode) {
+            showNotification(`⬇️ Downloading Lab PDF Report #${barcode} (${testName})...`, 'success');
+            const a = document.createElement('a');
+            a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(`MediVance Diagnostic Lab Report\nTest: ${testName}\nBarcode: ${barcode}\nPatient: Vaibhav Barwal (PAT-9921)\nStatus: Verified`);
+            a.download = `Lab_Report_${barcode}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function markMedicineTaken(btnEl, medName) {
+            if (!btnEl) return;
+            const card = btnEl.closest('.card');
+            if (card) {
+                card.style.background = '#f0fdf4';
+                card.style.borderTop = '4px solid #22c55e';
+            }
+            btnEl.style.background = '#dcfce7';
+            btnEl.style.color = '#15803d';
+            btnEl.style.border = '1px solid #86efac';
+            btnEl.style.cursor = 'default';
+            btnEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> TAKEN TODAY';
+            btnEl.onclick = null;
+            showNotification(`✅ ${medName} marked TAKEN for today!`, 'success');
+        }
+
+        function handlePatientRecordUploadSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('upRecordTitle').value;
+            const cat = document.getElementById('upRecordCategory').value;
+            const facility = document.getElementById('upRecordFacility').value;
+
+            const tbody = document.querySelector('#page-records tbody');
+            if (tbody) {
+                const tr = document.createElement('tr');
+                tr.style.cssText = 'border-bottom:1px solid #f1f5f9; font-size:0.9rem; background:#f0fdf4;';
+                tr.innerHTML = `
+                    <td style="padding:12px; font-weight:700; color:#1e293b;"><i class="fa-solid fa-file-pdf" style="color:#ef4444; margin-right:8px;"></i>${title}</td>
+                    <td>${cat}</td>
+                    <td>Today</td>
+                    <td>${facility}</td>
+                    <td style="text-align:right;"><button class="action-btn" onclick="downloadRecordPDF('${title}')" style="padding:6px 12px; background:#0284c7; color:#fff; border:none; border-radius:6px; font-weight:700; font-size:0.75rem; cursor:pointer;"><i class="fa-solid fa-download"></i> Download PDF</button></td>
+                `;
+                tbody.insertBefore(tr, tbody.firstChild);
+            }
+            document.getElementById('uploadRecordModal').style.display = 'none';
+            showNotification(`📁 Document "${title}" uploaded to your Medical Records!`, 'success');
+        }
+
+        function handleAddMedicineSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('addMedName').value;
+            const dosage = document.getElementById('addMedDosage').value;
+            const freq = document.getElementById('addMedFreq').value;
+            const notes = document.getElementById('addMedNotes').value || 'Take as directed';
+
+            let storedMeds = [];
+            try {
+                storedMeds = JSON.parse(localStorage.getItem('patient_custom_medicines') || '[]');
+            } catch(err) {}
+
+            storedMeds.unshift({ name, dosage, frequency: freq, instructions: notes, doctor: 'Self Added' });
+            localStorage.setItem('patient_custom_medicines', JSON.stringify(storedMeds));
+
+            document.getElementById('addMedicineModal').style.display = 'none';
+            loadPatientPrescriptions();
+            showNotification(`💊 "${name}" added to your Active Prescriptions!`, 'success');
+        }
+
+        async function loadPatientPrescriptions() {
+            const listEl = document.getElementById('patientPrescriptionsList');
+            if (!listEl) return;
+
+            let customMeds = [];
+            try {
+                customMeds = JSON.parse(localStorage.getItem('patient_custom_medicines') || '[]');
+            } catch(e) {}
+
+            const defaultMeds = [
+                { name: 'Multivitamin Supplement', dosage: '1 Tablet', frequency: 'Once daily (Morning)', duration: '90 days', instructions: 'Take after breakfast', doctor: 'Dr. Rajesh Gupta' },
+                { name: 'Amoxicillin 500mg Antibiotic', dosage: '1 Capsule', frequency: 'Twice daily', duration: '7 days', instructions: 'Take with food', doctor: 'Dr. Meera Kapoor' },
+                { name: 'Omega-3 Fish Oil 1000mg', dosage: '1 Softgel', frequency: 'Once daily (Afternoon)', duration: '60 days', instructions: 'Take after lunch', doctor: 'Dr. Meera Kapoor' },
+                { name: 'Amlodipine 5mg Blood Pressure', dosage: '1 Tablet', frequency: 'Once daily', duration: '30 days', instructions: 'Take in morning', doctor: 'Dr. Meera Kapoor' }
+            ];
+
+            const allMeds = [...customMeds, ...defaultMeds];
+
+            listEl.innerHTML = '<div style="display:grid; gap:12px;">' +
+                allMeds.map(m => `
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h4 style="margin:0; font-size:1rem; font-weight:700; color:#1e293b;"><i class="fa-solid fa-pills" style="color:#0284c7; margin-right:6px;"></i>${m.name}</h4>
+                            <p style="margin:4px 0 0 0; font-size:0.85rem; color:#64748b;">Dosage: <strong>${m.dosage}</strong> · Frequency: <strong>${m.frequency}</strong> · Duration: ${m.duration || '30 days'}</p>
+                            <p style="margin:2px 0 0 0; font-size:0.8rem; color:#0369a1;"><em>${m.instructions || 'Take after food'}</em> · Prescribed by: <strong>${m.doctor || 'Attending Doctor'}</strong></p>
+                        </div>
+                        <span style="background:#e0f2fe; color:#0369a1; padding:4px 10px; border-radius:12px; font-size:0.75rem; font-weight:700;">Active</span>
+                    </div>
+                `).join('') + '</div>';
+        }
+
+        async function loadPatientBilling() {
+            const listEl = document.getElementById('patientBillingList');
+            if (!listEl) return;
+
+            let storedInvoices = [];
+            try {
+                storedInvoices = JSON.parse(localStorage.getItem('medivance_saved_invoices') || '[]');
+            } catch(e) {}
+
+            const formattedStored = storedInvoices.map(inv => ({
+                _id: inv.id,
+                invoiceId: inv.id,
+                services: inv.service || 'OPD Consultation',
+                totalAmount: inv.amount ? inv.amount.replace('₹', '') : '1200',
+                paymentStatus: inv.status || 'Pending'
+            }));
+
+            const sampleInvoices = [
+                { _id: 'inv1', invoiceId: 'INV-2024-001', services: 'OPD Consultation + ECG Scan', totalAmount: 2500, paymentStatus: 'Paid' },
+                { _id: 'inv2', invoiceId: 'INV-2024-002', services: 'Cardiac Specialist Consultation', totalAmount: 1200, paymentStatus: 'Pending' }
+            ];
+
+            const allInvoices = [...formattedStored, ...sampleInvoices];
+
+            listEl.innerHTML = '<table style="width:100%; border-collapse:collapse; text-align:left;">' +
+                '<tr style="border-bottom:1px solid #eee; font-size:0.85rem; color:#64748b;"><th style="padding:10px;">Invoice #</th><th>Services / Description</th><th>Amount</th><th>Status</th><th style="text-align:right;">Action</th></tr>' +
+                allInvoices.map(inv => `
+                    <tr style="border-bottom:1px solid #f1f5f9; font-size:0.9rem; ${formattedStored.some(i => i.invoiceId === inv.invoiceId) ? 'background:#f0fdf4;' : ''}">
+                        <td style="padding:10px; font-weight:700; color:#1e293b;">${inv.invoiceId}</td>
+                        <td style="font-weight:600; color:#0369a1;">${inv.services}</td>
+                        <td style="font-weight:700; color:#0f172a;">₹${inv.totalAmount}</td>
+                        <td><span style="padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:700; background:${inv.paymentStatus==='Paid'?'#dcfce7':'#fef3c7'}; color:${inv.paymentStatus==='Paid'?'#15803d':'#d97706'};">${inv.paymentStatus}</span></td>
+                        <td style="text-align:right; padding:10px;">
+                            ${inv.paymentStatus === 'Pending' ? `<button onclick="handlePayInvoice('${inv.invoiceId}', '${inv.services}', '${inv.totalAmount}', this)" style="padding:6px 14px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-weight:700; font-size:0.8rem; cursor:pointer;"><i class="fa-solid fa-credit-card"></i> Pay Now (₹${inv.totalAmount})</button>` : '<span style="color:#16a34a; font-weight:700; font-size:0.85rem;"><i class="fa-solid fa-circle-check"></i> Paid</span>'}
+                        </td>
+                    </tr>
+                `).join('') +
+                '</table>';
+        }
+
+        function toggleMobileSidebar() {
+            const menu = document.querySelector('.nav-menu');
+            if (menu) {
+                menu.classList.toggle('mobile-open');
+            }
+        }
+
+        function handlePayInvoice(invoiceId, serviceName, amount, btnEl) {
+            document.getElementById('receiptId').innerText = 'REC-2026-' + Math.floor(1000 + Math.random()*9000);
+            document.getElementById('receiptService').innerText = serviceName || 'OPD Consultation';
+            document.getElementById('receiptAmount').innerText = typeof amount === 'number' ? '₹' + amount : amount;
+            
+            document.getElementById('paymentReceiptModal').style.display = 'flex';
+
+            if (btnEl) {
+                const row = btnEl.closest('tr');
+                if (row) {
+                    const statusTd = row.children[3];
+                    const actionTd = row.children[4];
+                    if (statusTd) statusTd.innerHTML = '<span style="padding:3px 10px; border-radius:12px; font-size:0.75rem; font-weight:700; background:#dcfce7; color:#15803d;">Paid</span>';
+                    if (actionTd) actionTd.innerHTML = '<span style="color:#16a34a; font-weight:700; font-size:0.85rem;"><i class="fa-solid fa-circle-check"></i> Paid</span>';
+                }
+            }
+            showNotification('💳 Payment confirmed! Receipt issued.', 'success');
+        }
+
+        function switchPage(event, pageId, clickedElement) {
+            if(event) event.preventDefault();
+
+            // Auto-close mobile navigation drawer on mobile screens
+            const menu = document.querySelector('.nav-menu');
+            if (menu) {
+                menu.classList.remove('mobile-open');
+                menu.style.display = '';
+            }
+
+            // Toggle Back to Dashboard Overview button on mobile screens
+            const backBtn = document.getElementById('mobileBackToOverviewBtn');
+            if (backBtn) {
+                if (pageId !== 'page-dashboard' && pageId !== 'page-overview') {
+                    backBtn.style.display = 'inline-flex';
+                } else {
+                    backBtn.style.display = 'none';
+                }
+            }
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
+
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(page => page.classList.remove('active-page'));
+
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active-page');
+            }
+        }
+
+        function handleLogout(event) {
+            event.preventDefault();
+            localStorage.removeItem('medivance_token');
+            localStorage.removeItem('medivance_user');
+            window.location.href = 'loginpage.html';
+        }
+
+        // --- Sound Alert System for Medicine Reminder ---
+        function playUniqueReminderSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                const playChime = (freq, startTime, duration) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTime);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime + startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + startTime + duration);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + startTime);
+                    osc.stop(audioCtx.currentTime + startTime + duration);
+                };
+
+                playChime(523.25, 0, 0.2);   // C5
+                playChime(659.25, 0.15, 0.2); // E5
+                playChime(783.99, 0.3, 0.4);  // G5
+            } catch (e) {
+                console.log('Audio context playback blocked or not supported');
+            }
+        }
+
+        function triggerMedReminder(name, time) {
+            document.getElementById('medModalTitle').innerText = name;
+            document.getElementById('medModalBody').innerText = `Scheduled Time: ${time}`;
+            document.getElementById('reminderModal').classList.add('active');
+            playUniqueReminderSound();
+        }
+
+        function closeMedReminder() {
+            document.getElementById('reminderModal').classList.remove('active');
+        }
+
+        function applyPatientProfileData() {
+            try {
+                const rawUser = localStorage.getItem('medivance_user');
+                if (!rawUser) return;
+                const user = JSON.parse(rawUser);
+                if (!user || !user.fullName) return;
+
+                const patientName = user.fullName;
+                const patientId = user.patientId || 'PAT-2026-9900';
+                const gender = (user.profile && user.profile.gender) || user.gender || '';
+
+                const isFemale = (gender && gender.toLowerCase().includes('female')) ||
+                    patientName.toLowerCase().includes('priya') ||
+                    patientName.toLowerCase().includes('sunita') ||
+                    patientName.toLowerCase().includes('anita') ||
+                    patientName.toLowerCase().includes('meenakshi');
+
+                const avatarUrl = isFemale ?
+                    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=250' :
+                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=250';
+
+                // Update Hero Banner Name & Avatar
+                const heroNameEl = document.querySelector('.patient-identity h1');
+                if (heroNameEl) heroNameEl.innerText = patientName;
+
+                const heroSubEl = document.querySelector('.patient-identity p');
+                if (heroSubEl) heroSubEl.innerText = `Patient ID: ${patientId} · Active OPD Membership`;
+
+                const heroAvatarImg = document.querySelector('.hero-avatar-wrapper img, .patient-avatar img');
+                if (heroAvatarImg) heroAvatarImg.src = avatarUrl;
+
+                // Update Sidebar Profile
+                const sidebarNameEl = document.querySelector('.sidebar-profile h4, .sidebar-profile-info h4, .sidebar-profile-details h4');
+                if (sidebarNameEl) sidebarNameEl.innerText = patientName;
+
+                const sidebarSubEl = document.querySelector('.sidebar-profile p, .sidebar-profile-info p, .sidebar-profile-details p');
+                if (sidebarSubEl) sidebarSubEl.innerText = `ID: ${patientId}`;
+
+                const sidebarAvatarImg = document.querySelector('.sidebar-profile img, .sidebar-profile-avatar img');
+                if (sidebarAvatarImg) sidebarAvatarImg.src = avatarUrl;
+
+                // Update Profile Modal
+                const modalNameEl = document.querySelector('#patientProfileModal h2');
+                if (modalNameEl) modalNameEl.innerText = patientName;
+
+                const modalImg = document.querySelector('#patientProfileModal img');
+                if (modalImg) modalImg.src = avatarUrl;
+            } catch(err) {
+                console.log('Error applying patient profile:', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyPatientProfileData();
+        });
+
+        function openPatientProfile() {
+            const modal = document.getElementById('patientProfileModal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closePatientProfile() {
+            const modal = document.getElementById('patientProfileModal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+            }
+        }
+
+        // --- Doctor Profile Feature ---
+        const doctorsData = {
+            mkapoor: {
+                name: "Dr. Meera Kapoor",
+                initials: "MK",
+                dept: "Senior Cardiologist · Cardiology",
+                exp: "14+ Years Experience",
+                qual: "MD, DM (Cardiology)",
+                hosp: "Medivance Heart Wing",
+                fee: "₹1,200",
+                contact: "+91 98201 12345",
+                colorBg: "#DBEAFE",
+                colorText: "#2563EB",
+                bio: "Leading specialist in cardiac rhythm diagnostics, non-invasive ECG monitoring, and personalized hypertension care.",
+                vitals: [
+                    { icon: "fa-heart", color: "#FF4D4D", text: "Heart Rate Target (60-90 bpm)" },
+                    { icon: "fa-wave-square", color: "#0062FF", text: "BP Range (120/80 mmHg)" },
+                    { icon: "fa-lungs", color: "#00D084", text: "Oxygen Saturation (>=98%)" }
+                ]
+            },
+            rgupta: {
+                name: "Dr. Rajesh Gupta",
+                initials: "RG",
+                dept: "General Physician · Internal Medicine",
+                exp: "10+ Years Experience",
+                qual: "MBBS, MD (General Medicine)",
+                hosp: "Medivance Main Care",
+                fee: "₹800",
+                contact: "+91 98202 67890",
+                colorBg: "#FCE7F3",
+                colorText: "#DB2777",
+                bio: "Expert in primary diagnostic health tracking, preventive metabolic reviews, and chronic wellness lifestyle management.",
+                vitals: [
+                    { icon: "fa-droplet", color: "#FF9F43", text: "Fasting Glucose (70-100 mg/dL)" },
+                    { icon: "fa-heart", color: "#FF4D4D", text: "Resting Pulse Sync" },
+                    { icon: "fa-weight-scale", color: "#8B5CF6", text: "BMI & Metabolic Metrics" }
+                ]
+            },
+            asen: {
+                name: "Dr. Anaya Sen",
+                initials: "AS",
+                dept: "Dermatologist & Cosmetologist",
+                exp: "8+ Years Experience",
+                qual: "MD (Dermatology, Venereology)",
+                hosp: "Medivance Skin Clinic",
+                fee: "₹1,000",
+                contact: "+91 98203 45678",
+                colorBg: "#F3E8FF",
+                colorText: "#9333EA",
+                bio: "Focused on modern clinical dermatology, allergy screening, systemic inflammatory responses, and photo-aging prevention.",
+                vitals: [
+                    { icon: "fa-temperature-half", color: "#EF4444", text: "Skin Surface Temp Monitor" },
+                    { icon: "fa-shield-halved", color: "#10B981", text: "Allergy Sensitivity Index" }
+                ]
+            }
+        };
+
+        function openDoctorProfile(docKey) {
+            const doc = doctorsData[docKey];
+            if(!doc) return;
+
+            document.getElementById('docName').innerText = doc.name;
+            document.getElementById('docInitials').innerText = doc.initials;
+            document.getElementById('docDept').innerText = doc.dept;
+            document.getElementById('docExp').innerText = doc.exp;
+            document.getElementById('docQual').innerText = doc.qual;
+            document.getElementById('docHosp').innerText = doc.hosp;
+            document.getElementById('docFee').innerText = doc.fee;
+            document.getElementById('docContact').innerText = doc.contact;
+            document.getElementById('docBio').innerText = doc.bio;
+
+            const avatarBg = document.getElementById('docAvatarBg');
+            avatarBg.style.backgroundColor = doc.colorBg;
+            avatarBg.style.color = doc.colorText;
+
+            const vitalsContainer = document.getElementById('docVitalsList');
+            vitalsContainer.innerHTML = '';
+            doc.vitals.forEach(v => {
+                const pill = document.createElement('span');
+                pill.className = 'vital-pill-tag';
+                pill.innerHTML = `<i class="fa-solid ${v.icon}" style="color: ${v.color};"></i> ${v.text}`;
+                vitalsContainer.appendChild(pill);
+            });
+
+            const modal = document.getElementById('doctorProfileModal');
+            modal.classList.add('active');
+        }
+
+        function closeDoctorProfile() {
+            document.getElementById('doctorProfileModal').classList.remove('active');
+        }
+
+        // --- Interactive Multi-Metric Vitals Chart Fix ---
+        let healthChart;
+        const chartDataSets = {
+            pulse: {
+                title: "Weekly Pulse Tracking",
+                sub: "Automated heart-rate sensor sync",
+                label: "Pulse Rate (bpm)",
+                data: [70, 72, 68, 74, 71, 73, 72],
+                color: '#0062FF',
+                minY: 50,
+                maxY: 100
+            },
+            sugar: {
+                title: "Blood Glucose Log",
+                sub: "Fasting & post-meal monitoring",
+                label: "Blood Sugar (mg/dL)",
+                data: [95, 102, 98, 110, 96, 99, 98],
+                color: '#FF9F43',
+                minY: 70,
+                maxY: 140
+            },
+            o2: {
+                title: "Oxygen Saturation Trend",
+                sub: "Continuous SpO2 tracking",
+                label: "O₂ Level (%)",
+                data: [98, 99, 99, 97, 98, 99, 99],
+                color: '#00D084',
+                minY: 90,
+                maxY: 100
+            }
+        };
+
+        const ctxTrend = document.getElementById('healthTrendChart').getContext('2d');
+        
+        function initChart() {
+            const initial = chartDataSets.pulse;
+            healthChart = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: initial.label,
+                        data: initial.data,
+                        borderColor: initial.color,
+                        backgroundColor: initial.color,
+                        borderWidth: 2.5,
+                        pointRadius: 5,
+                        pointBackgroundColor: initial.color,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { min: initial.minY, max: initial.maxY, grid: { borderDash: [4, 4] } }
+                    }
+                }
+            });
+        }
+        initChart();
+
+        function updateHealthChart(metricKey, tabElement) {
+            const config = chartDataSets[metricKey];
+            if (!config) return;
+
+            const tabs = tabElement.parentElement.querySelectorAll('.pill-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabElement.classList.add('active');
+
+            document.getElementById('chartTitle').innerText = config.title;
+            document.getElementById('chartSub').innerText = config.sub;
+
+            healthChart.data.datasets[0].label = config.label;
+            healthChart.data.datasets[0].data = config.data;
+            healthChart.data.datasets[0].borderColor = config.color;
+            healthChart.data.datasets[0].backgroundColor = config.color;
+            healthChart.data.datasets[0].pointBackgroundColor = config.color;
+            
+            healthChart.options.scales.y.min = config.minY;
+            healthChart.options.scales.y.max = config.maxY;
+            
+            healthChart.update();
+        }
+
+        // --- Video Call Integration Fixes ---
+        let appointmentGranted = true;
+
+        function mvOpenCallPanel() {
+            if (!appointmentGranted) {
+                alert("Video call access restricted. Your appointment needs to be granted first.");
+                return;
+            }
+            document.getElementById('callEndedOverlay').style.display = 'none';
+            document.getElementById('videoCallModal').classList.add('active');
+        }
+
+        function mvEndCall() {
+            document.getElementById('callEndedOverlay').style.display = 'flex';
+        }
+
+        function closeCallModal() {
+            document.getElementById('videoCallModal').classList.remove('active');
+        }
+
+        // Steps Chart
+        const ctxSteps = document.getElementById('stepsChart').getContext('2d');
+        new Chart(ctxSteps, {
+            type: 'bar',
+            data: {
+                labels: ['Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue'],
+                datasets: [{
+                    data: [6200, 7400, 8900, 9100, 6800, 8200],
+                    backgroundColor: '#10B981',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { display: false }
+                }
+            }
+        });
+
+        // Three.js Background
+        const bgContainer = document.getElementById('bg-three-container');
+        const bgScene = new THREE.Scene();
+        const bgCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        bgCamera.position.z = 10;
+
+        const bgRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        bgRenderer.setSize(window.innerWidth, window.innerHeight);
+        bgContainer.appendChild(bgRenderer.domElement);
+
+        const matBlue = new THREE.MeshPhysicalMaterial({
+            color: 0x2563eb, roughness: 0.1, metalness: 0.1, transmission: 0.6, opacity: 0.9, transparent: true, clearcoat: 1.0
+        });
+
+        const nodeGeo = new THREE.SphereGeometry(0.12, 16, 16);
+        const nodeMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.2 });
+        const matCyan = new THREE.MeshPhongMaterial({ color: 0x06b6d4, shininess: 100 });
+        const matPurple = new THREE.MeshPhongMaterial({ color: 0x7c3aed, shininess: 100 });
+
+        function createCapsule() {
+            const capGroup = new THREE.Group();
+            const capGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.6, 32);
+            const topGeo = new THREE.SphereGeometry(0.2, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+            const body = new THREE.Mesh(capGeo, matCyan);
+            const cap1 = new THREE.Mesh(topGeo, matPurple);
+            cap1.position.y = 0.3;
+            capGroup.add(body);
+            capGroup.add(cap1);
+            return capGroup;
+        }
+
+        const bgAmbient = new THREE.AmbientLight(0xffffff, 0.6);
+        bgScene.add(bgAmbient);
+        const bgDir = new THREE.DirectionalLight(0xffffff, 0.8);
+        bgDir.position.set(10, 10, 10);
+        bgScene.add(bgDir);
+
+        const bgMedicalGroup = new THREE.Group();
+        bgScene.add(bgMedicalGroup);
+
+        const crossShape = new THREE.Group();
+        const vBar = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2.4, 0.5), matBlue);
+        const hBar = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.8, 0.5), matBlue);
+        crossShape.add(vBar);
+        crossShape.add(hBar);
+        bgMedicalGroup.add(crossShape);
+
+        const dnaGroup = new THREE.Group();
+        for (let i = -8; i <= 8; i++) {
+            const y = i * 0.25;
+            const angle = i * 0.5;
+            const sphere1 = new THREE.Mesh(nodeGeo, nodeMat);
+            sphere1.position.set(Math.cos(angle) * 1.0, y, Math.sin(angle) * 1.0);
+            const sphere2 = new THREE.Mesh(nodeGeo, nodeMat);
+            sphere2.position.set(-Math.cos(angle) * 1.0, y, -Math.sin(angle) * 1.0);
+            dnaGroup.add(sphere1);
+            dnaGroup.add(sphere2);
+        }
+        dnaGroup.position.set(-5, 0, -3);
+        bgMedicalGroup.add(dnaGroup);
+
+        const pill1 = createCapsule();
+        pill1.position.set(4, 3, -1);
+        pill1.rotation.z = Math.PI / 4;
+        bgMedicalGroup.add(pill1);
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            crossShape.rotation.y += 0.005;
+            dnaGroup.rotation.y += 0.01;
+            pill1.rotation.y += 0.01;
+            bgMedicalGroup.position.y = Math.sin(Date.now() * 0.001) * 0.2;
+            bgMedicalGroup.rotation.x += (mouseY * 0.1 - bgMedicalGroup.rotation.x) * 0.05;
+            bgMedicalGroup.rotation.y += (mouseX * 0.1 - bgMedicalGroup.rotation.y) * 0.05;
+            bgRenderer.render(bgScene, bgCamera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            bgRenderer.setSize(window.innerWidth, window.innerHeight);
+            bgCamera.aspect = window.innerWidth / window.innerHeight;
+            bgCamera.updateProjectionMatrix();
+        });
+    </script>
+<script>
+  window.MV_CALL_ROLE = 'patient';
+  window.MV_CALL_SELF_ID = 'medivance-patient-demo';
+  window.MV_CALL_PEER_ID = 'medivance-dr-mkapoor';
+  window.MV_CALL_PEER_NAME = 'Dr. Meera Kapoor';
+</script>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="video-call.js"></script>
+<!-- 1. Upload Record Modal -->
+<div id="uploadRecordModal" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.75); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#fff; width:90%; max-width:500px; padding:24px; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.2);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; margin:0;"><i class="fa-solid fa-cloud-arrow-up" style="color:#0062ff;"></i> Upload New Medical Record</h3>
+            <button onclick="document.getElementById('uploadRecordModal').style.display='none';" style="border:none; background:none; font-size:1.4rem; cursor:pointer; color:#64748b;">&times;</button>
+        </div>
+        <form onsubmit="handlePatientRecordUploadSubmit(event)" style="display:grid; gap:12px;">
+            <div>
+                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Document Title</label>
+                <input type="text" id="upRecordTitle" required placeholder="e.g. Lipid Profile Lab Summary / Chest X-Ray" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+            </div>
+            <div>
+                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Document Category</label>
+                <select id="upRecordCategory" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+                    <option value="General OPD">General OPD</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Radiology / Scans">Radiology / Scans</option>
+                    <option value="Pathology Lab">Pathology Lab</option>
+                    <option value="Discharge Summary">Discharge Summary</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Attending Doctor / Lab Facility</label>
+                <input type="text" id="upRecordFacility" required placeholder="e.g. Dr. Meera Kapoor / MediVance Lab" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+            </div>
+            <div>
+                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Select File (PDF / JPG / PNG)</label>
+                <input type="file" id="upRecordFile" required style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc;" />
+            </div>
+            <button type="submit" style="padding:12px; background:linear-gradient(135deg, #0062ff 0%, #00d084 100%); color:#fff; border:none; border-radius:10px; font-weight:800; cursor:pointer; margin-top:6px;">Upload Document to Health Vault</button>
+        </form>
+    </div>
 </div>
 
-<div class="stat">
-<h3>19</h3>
-<p>Today's Visits</p>
+<!-- 2. Add Medicine / Refill Modal -->
+<div id="addMedicineModal" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.75); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#fff; width:90%; max-width:500px; padding:24px; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.2);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+            <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; margin:0;"><i class="fa-solid fa-pills" style="color:#0062ff;"></i> Add Medicine to My Schedule</h3>
+            <button onclick="document.getElementById('addMedicineModal').style.display='none';" style="border:none; background:none; font-size:1.4rem; cursor:pointer; color:#64748b;">&times;</button>
+        </div>
+        <form onsubmit="handleAddMedicineSubmit(event)" style="display:grid; gap:12px;">
+            <div>
+                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Medicine Name</label>
+                <input type="text" id="addMedName" required placeholder="e.g. Metformin 500mg" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                    <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Dosage</label>
+                    <input type="text" id="addMedDosage" required placeholder="1 Tablet" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Frequency</label>
+                    <select id="addMedFreq" required style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; background:#fff;">
+                        <option value="Once daily (Morning)">Once daily (Morning)</option>
+                        <option value="Twice daily (Morning/Night)">Twice daily (Morning/Night)</option>
+                        <option value="Three times daily">Three times daily</option>
+                        <option value="As needed (PRN)">As needed (PRN)</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label style="font-weight:600; font-size:0.85rem; display:block; margin-bottom:4px;">Special Instructions</label>
+                <input type="text" id="addMedNotes" placeholder="Take after meals with water..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;" />
+            </div>
+            <button type="submit" style="padding:12px; background:#0062ff; color:#fff; border:none; border-radius:10px; font-weight:800; cursor:pointer; margin-top:6px;">Save Medicine to Schedule</button>
+        </form>
+    </div>
 </div>
 
-<div class="stat">
-<h3>12</h3>
-<p>Prescriptions</p>
+<!-- 3. Payment Receipt Confirmation Modal -->
+<div id="paymentReceiptModal" style="display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.75); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#fff; width:90%; max-width:520px; padding:24px; border-radius:20px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); text-align:center;">
+        <div style="width:64px; height:64px; border-radius:50%; background:#dcfce7; color:#16a34a; font-size:2rem; display:flex; align-items:center; justify-content:center; margin:0 auto 12px auto;">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h3 style="font-size:1.4rem; font-weight:800; color:#1e293b; margin:0;">Payment Successful!</h3>
+        <p style="font-size:0.88rem; color:#64748b; margin:4px 0 16px 0;">Official MediVance Electronic Payment Receipt</p>
+        
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; text-align:left; display:grid; gap:8px; font-size:0.88rem; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Receipt Number:</span>
+                <strong style="color:#1e293b;" id="receiptId">REC-2026-9941</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Patient Name:</span>
+                <strong style="color:#1e293b;">Vaibhav Barwal (PAT-9921)</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Service Description:</span>
+                <strong style="color:#0284c7;" id="receiptService">OPD Cardiology Consultation</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Amount Paid:</span>
+                <strong style="color:#16a34a; font-size:1.05rem;" id="receiptAmount">₹1,200</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Payment Method:</span>
+                <span style="background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:6px; font-weight:700; font-size:0.78rem;">UPI Instant Clearance</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:#64748b;">Transaction Time:</span>
+                <span style="color:#64748b; font-weight:600;">Today · Just Now</span>
+            </div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button onclick="window.print()" style="padding:10px; background:#f1f5f9; color:#334155; border:1px solid #cbd5e1; border-radius:8px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-print"></i> Print Receipt</button>
+            <button onclick="document.getElementById('paymentReceiptModal').style.display='none';" style="padding:10px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer;">Close & Return</button>
+        </div>
+    </div>
 </div>
 
-<div class="stat">
-<h3>5</h3>
-<p>Emergencies</p>
-</div>
-
-</div>
-
-</div>
-
-<div class="box">
-
-<h3>Patient Queue</h3>
-
-<div class="queue-item">
-<span>Rahul Sharma</span>
-<span>09:30 AM</span>
-</div>
-
-<div class="queue-item">
-<span>Priya Verma</span>
-<span>10:15 AM</span>
-</div>
-
-<div class="queue-item">
-<span>Amit Joshi</span>
-<span>11:00 AM</span>
-</div>
-
-<div class="queue-item">
-<span>Sneha Patil</span>
-<span>12:00 PM</span>
-</div>
-
-</div>
-
-<div class="box activity">
-
-<h3>Recent Activity</h3>
-
-<p>✔ Prescription sent to Rahul Sharma</p>
-<p>✔ Lab report reviewed</p>
-<p>✔ Appointment completed</p>
-<p>✔ Medical record updated</p>
-
-</div>
-
-</div>
-
-<div class="right">
-
-<div class="box">
-
-<h3>Mini Calendar</h3>
-
-<div class="calendar">
-<div>1</div>
-<div>2</div>
-<div>3</div>
-<div>4</div>
-<div>5</div>
-<div>6</div>
-<div class="today">7</div>
-</div>
-
-</div>
-
-<div class="box">
-
-<h3>Performance</h3>
-
-<p>Patients Treated This Week</p>
-
-<div class="progress">
-<span></span>
-</div>
-
-<p style="margin-top:10px;">82% Goal Achieved</p>
-
-</div>
-
-<div class="box">
-
-<h3>Quick Notes</h3>
-
-<p>• Staff meeting at 4 PM</p>
-<p>• Review MRI reports</p>
-<p>• Call emergency patient</p>
-
-</div>
-
-</div>
-
-</div>
-
+<script src="chatbot-widget.js"></script>
 </body>
 </html>
