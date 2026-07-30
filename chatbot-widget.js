@@ -151,3 +151,4 @@
   });
   win.querySelector('#mv-chat-close').addEventListener('click', () => win.classList.remove('open'));
 })();
+
