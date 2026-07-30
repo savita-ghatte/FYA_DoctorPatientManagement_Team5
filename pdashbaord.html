@@ -6,169 +6,184 @@
 <title>Doctor Dashboard</title>
 
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
 }
 
 body{
-    display:flex;
-    background:#f5f7fb;
+background:#f6f7fb;
+padding:30px;
 }
 
-/* Sidebar */
+.dashboard{
+display:grid;
+grid-template-columns:280px 1fr;
+gap:25px;
+}
+
+/* Left Panel */
 
 .sidebar{
-    width:240px;
-    height:100vh;
-    background:#0f172a;
-    color:white;
-    padding:25px;
+background:white;
+border-radius:20px;
+padding:25px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
-.sidebar h2{
-    margin-bottom:35px;
+.profile{
+text-align:center;
 }
 
-.sidebar ul{
-    list-style:none;
+.profile img{
+width:100px;
+height:100px;
+border-radius:50%;
+margin-bottom:15px;
 }
 
-.sidebar li{
-    padding:14px;
-    margin:8px 0;
-    border-radius:8px;
-    cursor:pointer;
+.profile h2{
+color:#5b3cc4;
 }
 
-.sidebar li:hover{
-    background:#2563eb;
+.menu{
+margin-top:35px;
 }
 
-/* Main */
+.menu div{
+padding:14px;
+margin:10px 0;
+border-radius:10px;
+cursor:pointer;
+}
+
+.menu div:hover{
+background:#ede8ff;
+color:#5b3cc4;
+}
+
+/* Right */
 
 .main{
-    flex:1;
-    padding:25px;
+display:flex;
+flex-direction:column;
+gap:20px;
 }
-
-/* Header */
 
 .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-.header input{
-    width:280px;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
+.search{
+padding:10px 15px;
+width:250px;
+border-radius:10px;
+border:1px solid #ccc;
 }
 
 /* Cards */
 
 .cards{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
-    margin-bottom:25px;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
 }
 
 .card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
-.card h2{
-    color:#2563eb;
-    margin-bottom:8px;
+.card h1{
+color:#5b3cc4;
 }
 
-/* Layout */
+/* Content */
 
 .content{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:20px;
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:20px;
 }
 
-/* Patients */
-
-.panel{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 3px 12px rgba(0,0,0,.08);
+.box{
+background:white;
+border-radius:15px;
+padding:20px;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
 .patient{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:15px;
-    padding:12px;
-    background:#f8fafc;
-    border-radius:10px;
+display:flex;
+justify-content:space-between;
+padding:12px 0;
+border-bottom:1px solid #eee;
 }
 
-.status{
-    color:green;
-    font-weight:bold;
+.schedule{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:8px;
+margin-top:15px;
 }
 
-/* Right */
-
-.profile{
-    text-align:center;
+.day{
+background:#ede8ff;
+padding:12px;
+text-align:center;
+border-radius:10px;
 }
 
-.profile img{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    margin-bottom:15px;
+.today{
+background:#5b3cc4;
+color:white;
 }
 
-button{
-    width:100%;
-    padding:10px;
-    margin-top:12px;
-    border:none;
-    border-radius:8px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
+.notice{
+margin-top:15px;
+padding:12px;
+background:#f9f5ff;
+border-left:5px solid #5b3cc4;
+border-radius:8px;
 }
 
-.schedule p{
-    margin:12px 0;
-}
 </style>
-
 </head>
 
 <body>
 
+<div class="dashboard">
+
 <div class="sidebar">
 
-<h2>🩺 MediVance</h2>
+<div class="profile">
 
-<ul>
-<li>🏠 Dashboard</li>
-<li>👨‍⚕️ Patients</li>
-<li>📅 Appointments</li>
-<li>💊 Prescriptions</li>
-<li>🧪 Reports</li>
-<li>💬 Messages</li>
-<li>⚙️ Settings</li>
-</ul>
+<img src="https://i.pravatar.cc/100?img=15">
+
+<h2>Dr. Sarah Lee</h2>
+
+<p>Neurologist</p>
+
+</div>
+
+<div class="menu">
+
+<div>🏠 Dashboard</div>
+<div>👨 Patients</div>
+<div>📅 Schedule</div>
+<div>💊 Prescriptions</div>
+<div>📊 Analytics</div>
+<div>⚙ Settings</div>
+
+</div>
 
 </div>
 
@@ -177,126 +192,103 @@ button{
 <div class="header">
 
 <div>
-<h1>Hello, Doctor 👋</h1>
-<p>Welcome back to your dashboard</p>
+<h1>Good Morning 👋</h1>
+<p>Have a wonderful day at the hospital.</p>
 </div>
 
-<input type="text" placeholder="Search Patient">
+<input class="search" placeholder="Search Patient">
 
 </div>
 
 <div class="cards">
 
 <div class="card">
-<h2>325</h2>
+<h1>328</h1>
 <p>Total Patients</p>
 </div>
 
 <div class="card">
-<h2>18</h2>
-<p>Today's Appointments</p>
+<h1>21</h1>
+<p>Appointments</p>
 </div>
 
 <div class="card">
-<h2>11</h2>
+<h1>12</h1>
 <p>Pending Reports</p>
 </div>
 
 <div class="card">
-<h2>6</h2>
-<p>Emergency Cases</p>
+<h1>98%</h1>
+<p>Success Rate</p>
 </div>
 
 </div>
 
 <div class="content">
 
-<div>
+<div class="box">
 
-<div class="panel">
-
-<h2>Recent Patients</h2>
+<h2>Patient Queue</h2>
 
 <div class="patient">
-<div>
-<b>Rahul Sharma</b><br>
-General Checkup
-</div>
-<span class="status">Completed</span>
+<span>Rahul Sharma</span>
+<span>09:30 AM</span>
 </div>
 
 <div class="patient">
-<div>
-<b>Priya Patel</b><br>
-Blood Test
-</div>
-<span style="color:orange;font-weight:bold;">Waiting</span>
+<span>Priya Patel</span>
+<span>10:15 AM</span>
 </div>
 
 <div class="patient">
-<div>
-<b>Neha Joshi</b><br>
-Heart Consultation
-</div>
-<span style="color:red;font-weight:bold;">Emergency</span>
+<span>Neha Joshi</span>
+<span>11:00 AM</span>
 </div>
 
 <div class="patient">
-<div>
-<b>Amit Verma</b><br>
-Diabetes Review
-</div>
-<span class="status">Completed</span>
-</div>
-
-</div>
-
-<br>
-
-<div class="panel schedule">
-
-<h2>Today's Schedule</h2>
-
-<p>🕘 09:00 AM - Rahul Sharma</p>
-<p>🕙 10:30 AM - Priya Patel</p>
-<p>🕛 12:00 PM - Neha Joshi</p>
-<p>🕒 03:00 PM - Amit Verma</p>
-
+<span>Amit Verma</span>
+<span>02:00 PM</span>
 </div>
 
 </div>
 
 <div>
 
-<div class="panel profile">
+<div class="box">
 
-<img src="https://i.pravatar.cc/150?img=12">
+<h2>Weekly Schedule</h2>
 
-<h2>Dr. Vaibhav</h2>
+<div class="schedule">
 
-<p>Cardiologist</p>
-
-<button>View Profile</button>
-
-<button>New Prescription</button>
-
-<button>Video Consultation</button>
+<div class="day">Mon</div>
+<div class="day">Tue</div>
+<div class="day today">Wed</div>
+<div class="day">Thu</div>
+<div class="day">Fri</div>
+<div class="day">Sat</div>
+<div class="day">Sun</div>
 
 </div>
 
-<br>
+</div>
 
-<div class="panel">
+<div class="box" style="margin-top:20px;">
 
-<h2>Announcements</h2>
+<h2>Notifications</h2>
 
-<br>
+<div class="notice">
+✔ Staff Meeting at 4 PM
+</div>
 
-<p>📢 Staff Meeting - 5:00 PM</p>
-<br>
-<p>🧪 4 Lab Reports Pending</p>
-<br>
-<p>🚑 Emergency Case in ICU</p>
+<div class="notice">
+🧪 6 Lab Reports Awaiting Review
+</div>
+
+<div class="notice">
+🚑 Emergency Patient Arrived
+</div>
+
+</div>
 
 </div>
 
