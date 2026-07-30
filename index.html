@@ -225,7 +225,6 @@
         </div>
       </div>
 
-      <!-- Doctor 4 -->
       <div class="glass-card rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
         <img src="WhatsApp Image 2026-07-24 at 11.20.22 AM.jpeg" alt="Dr. Gandharva Kolhe" class="w-full h-64 object-cover object-top" />
         <div class="p-6">
@@ -260,11 +259,9 @@
       <p class="mt-4 text-slate-600">Explore world-class facilities and modern medical centers in our network.</p>
     </div>
 
-    <!-- Carousel Container -->
     <div class="relative overflow-hidden rounded-3xl glass-card p-4 shadow-2xl">
       <div id="carousel-track" class="carousel-track">
         
-        <!-- Slide 1 -->
         <div class="min-w-full px-2">
           <div class="relative h-96 rounded-2xl overflow-hidden group">
             <img src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="St. Jude City Hospital" />
@@ -275,7 +272,6 @@
           </div>
         </div>
 
-        <!-- Slide 2 -->
         <div class="min-w-full px-2">
           <div class="relative h-96 rounded-2xl overflow-hidden group">
             <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Apex Healthcare Pavilion" />
@@ -286,7 +282,6 @@
           </div>
         </div>
 
-        <!-- Slide 3 -->
         <div class="min-w-full px-2">
           <div class="relative h-96 rounded-2xl overflow-hidden group">
             <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Nova Care Maternity Hospital" />
@@ -299,7 +294,6 @@
 
       </div>
 
-      <!-- Carousel Indicators -->
       <div class="flex justify-center space-x-2 mt-4">
         <button onclick="goToSlide(0)" class="w-3 h-3 rounded-full bg-blue-600 indicator-dot"></button>
         <button onclick="goToSlide(1)" class="w-3 h-3 rounded-full bg-slate-300 indicator-dot"></button>
@@ -308,7 +302,6 @@
     </div>
   </section>
 
-  <!-- About Section -->
   <section id="about" class="py-20 px-8 max-w-7xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div>
@@ -344,11 +337,9 @@
     </div>
   </section>
 
-  <!-- Footer & Social Media Handles -->
   <footer id="contact" class="bg-slate-900 text-slate-300 pt-16 pb-12 mt-20">
     <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-12 border-b border-slate-800">
       
-      <!-- App Info -->
       <div class="space-y-4">
         <div class="flex items-center space-x-3">
           <div class="bg-white p-1 rounded-xl shadow-md inline-block">
@@ -360,7 +351,6 @@
           MediVance is revolutionizing healthcare accessibility. Book appointments, store health records, and consult doctors on demand.
         </p>
 
-        <!-- Social Media Handles -->
         <div class="flex space-x-4 pt-2">
           <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
             <i class="fa-brands fa-facebook-f"></i>
@@ -377,7 +367,6 @@
         </div>
       </div>
 
-      <!-- Quick Links -->
       <div>
         <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
         <ul class="space-y-2 text-sm">
@@ -390,7 +379,6 @@
         </ul>
       </div>
 
-      <!-- Contact Info -->
       <div>
         <h4 class="text-lg font-semibold text-white mb-4">Contact & Support</h4>
         <ul class="space-y-3 text-sm text-slate-400">
@@ -409,7 +397,6 @@
         </ul>
       </div>
 
-      <!-- Newsletter -->
       <div>
         <h4 class="text-lg font-semibold text-white mb-4">Stay Informed</h4>
         <p class="text-xs text-slate-400 mb-4">Subscribe for updates on health advice and new clinical features.</p>
@@ -431,7 +418,6 @@
     </div>
   </footer>
 
-  <!-- Hospital Carousel Script -->
   <script>
     let currentSlide = 0;
     const track = document.getElementById('carousel-track');
@@ -452,16 +438,13 @@
       });
     }
 
-    // Auto-scroll every 4 seconds
     setInterval(() => {
       currentSlide = (currentSlide + 1) % totalSlides;
       goToSlide(currentSlide);
     }, 4000);
   </script>
 
-  <!-- Background 3D Scene Initialization Script -->
   <script>
-    // Mouse Position Tracker
     let mouseX = 0;
     let mouseY = 0;
     window.addEventListener('mousemove', (e) => {
@@ -469,7 +452,6 @@
       mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     });
 
-    // 3D Scene Setup
     const bgContainer = document.getElementById('bg-three-container');
     const bgScene = new THREE.Scene();
     const bgCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -480,18 +462,15 @@
     bgRenderer.setPixelRatio(window.devicePixelRatio);
     bgContainer.appendChild(bgRenderer.domElement);
 
-    // Lights
     const bgAmbient = new THREE.AmbientLight(0xffffff, 0.6);
     bgScene.add(bgAmbient);
     const bgDir = new THREE.DirectionalLight(0xffffff, 0.8);
     bgDir.position.set(10, 10, 10);
     bgScene.add(bgDir);
 
-    // Grouping
     const bgMedicalGroup = new THREE.Group();
     bgScene.add(bgMedicalGroup);
 
-    // Materials
     const matBlue = new THREE.MeshPhysicalMaterial({
       color: 0x2563eb,
       roughness: 0.1,
@@ -506,7 +485,6 @@
     const matCyan = new THREE.MeshPhongMaterial({ color: 0x06b6d4, shininess: 100 });
     const matPurple = new THREE.MeshPhongMaterial({ color: 0x7c3aed, shininess: 100 });
 
-    // 1. Cross Shape
     const crossShape = new THREE.Group();
     const vBar = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2.4, 0.5), matBlue);
     const hBar = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.8, 0.5), matBlue);
@@ -514,7 +492,6 @@
     crossShape.add(hBar);
     bgMedicalGroup.add(crossShape);
 
-    // 2. DNA Strand Group
     const dnaGroup = new THREE.Group();
     for (let i = -8; i <= 8; i++) {
       const y = i * 0.25;
@@ -529,7 +506,6 @@
     dnaGroup.position.set(-5, 0, -3);
     bgMedicalGroup.add(dnaGroup);
 
-    // Helper for Capsule creation
     function createCapsule() {
       const capGroup = new THREE.Group();
       const capGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.6, 32);
@@ -542,7 +518,6 @@
       return capGroup;
     }
 
-    // 3. Floating Pill Capsules
     const pill1 = createCapsule();
     pill1.position.set(4, 3, -1);
     pill1.rotation.z = Math.PI / 4;
@@ -553,18 +528,15 @@
     pill2.rotation.x = Math.PI / 3;
     bgMedicalGroup.add(pill2);
 
-    // Handle Window Resize
     window.addEventListener('resize', () => {
       bgRenderer.setSize(window.innerWidth, window.innerHeight);
       bgCamera.aspect = window.innerWidth / window.innerHeight;
       bgCamera.updateProjectionMatrix();
     });
 
-    // Animation Loop
     function animate() {
       requestAnimationFrame(animate);
 
-      // Background Scene Animation
       crossShape.rotation.y += 0.005;
       dnaGroup.rotation.y += 0.01;
       pill1.rotation.y += 0.01;
