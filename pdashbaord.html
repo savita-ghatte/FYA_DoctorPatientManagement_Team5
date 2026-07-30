@@ -10,183 +10,211 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
+    font-family:'Poppins',sans-serif;
 }
 
 body{
-    background:#f2f7fc;
+    background:#eef3f8;
 }
 
-/* Navbar */
-nav{
-    background:#0f766e;
-    color:white;
+/* Header */
+header{
+    background:#ffffff;
+    padding:20px 40px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:18px 40px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
 }
 
-nav ul{
-    display:flex;
-    list-style:none;
-    gap:25px;
+header h2{
+    color:#1d4ed8;
 }
 
-nav ul li{
+header button{
+    background:#1d4ed8;
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
     cursor:pointer;
 }
 
-/* Main */
-.container{
+/* Dashboard Grid */
+
+.dashboard{
     display:grid;
     grid-template-columns:2fr 1fr;
-    gap:25px;
+    gap:20px;
     padding:30px;
 }
 
-/* Left Section */
+/* Left Side */
+
 .left{
     display:flex;
     flex-direction:column;
     gap:20px;
 }
 
-.welcome{
-    background:white;
-    padding:25px;
+.box{
+    background:#fff;
     border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,.1);
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
 .stats{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
 }
 
-.card{
-    background:white;
-    padding:20px;
+.stat{
+    background:#f5f9ff;
     text-align:center;
-    border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,.08);
-}
-
-.card h2{
-    color:#0f766e;
-    margin-bottom:10px;
-}
-
-.schedule{
-    background:white;
     padding:20px;
-    border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,.08);
+    border-radius:12px;
 }
 
-.schedule ul{
-    margin-top:15px;
-    list-style:none;
+.stat h3{
+    color:#2563eb;
+    font-size:28px;
 }
 
-.schedule li{
-    padding:15px;
+/* Queue */
+
+.queue-item{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 0;
     border-bottom:1px solid #ddd;
 }
 
-/* Right */
+/* Right Side */
+
 .right{
     display:flex;
     flex-direction:column;
     gap:20px;
 }
 
-.profile,.notice,.actions{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,.08);
+.calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+    margin-top:15px;
 }
 
-.profile img{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    display:block;
-    margin:auto;
-}
-
-.profile{
-    text-align:center;
-}
-
-button{
-    width:100%;
+.calendar div{
+    background:#f3f4f6;
     padding:12px;
-    margin-top:10px;
-    border:none;
+    text-align:center;
     border-radius:8px;
-    background:#0f766e;
+}
+
+.today{
+    background:#2563eb !important;
     color:white;
-    cursor:pointer;
+}
+
+.activity p{
+    margin:12px 0;
+}
+
+.progress{
+    width:100%;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    height:10px;
+    margin-top:10px;
+}
+
+.progress span{
+    display:block;
+    height:10px;
+    width:82%;
+    background:#22c55e;
 }
 </style>
-
 </head>
+
 <body>
 
-<nav>
-<h2>🩺 HealthCare Doctor</h2>
+<header>
+    <h2>🩺 Doctor Dashboard</h2>
+    <button>+ New Appointment</button>
+</header>
 
-<ul>
-<li>Dashboard</li>
-<li>Patients</li>
-<li>Appointments</li>
-<li>Reports</li>
-<li>Logout</li>
-</ul>
-
-</nav>
-
-<div class="container">
+<div class="dashboard">
 
 <div class="left">
 
-<div class="welcome">
-<h2>Good Morning, Doctor 👋</h2>
-<p>Today's appointments are scheduled below. Stay healthy and have a great day!</p>
-</div>
+<div class="box">
+
+<h3>Overview</h3>
 
 <div class="stats">
 
-<div class="card">
-<h2>178</h2>
+<div class="stat">
+<h3>210</h3>
 <p>Patients</p>
 </div>
 
-<div class="card">
-<h2>14</h2>
-<p>Appointments</p>
+<div class="stat">
+<h3>19</h3>
+<p>Today's Visits</p>
 </div>
 
-<div class="card">
-<h2>6</h2>
-<p>Reports</p>
+<div class="stat">
+<h3>12</h3>
+<p>Prescriptions</p>
+</div>
+
+<div class="stat">
+<h3>5</h3>
+<p>Emergencies</p>
 </div>
 
 </div>
 
-<div class="schedule">
+</div>
 
-<h2>Appointment Schedule</h2>
+<div class="box">
 
-<ul>
-<li>🕘 09:00 AM - Rahul Sharma</li>
-<li>🕙 10:30 AM - Priya Patel</li>
-<li>🕛 12:00 PM - Ankit Verma</li>
-<li>🕒 03:00 PM - Sneha Joshi</li>
-</ul>
+<h3>Patient Queue</h3>
+
+<div class="queue-item">
+<span>Rahul Sharma</span>
+<span>09:30 AM</span>
+</div>
+
+<div class="queue-item">
+<span>Priya Verma</span>
+<span>10:15 AM</span>
+</div>
+
+<div class="queue-item">
+<span>Amit Joshi</span>
+<span>11:00 AM</span>
+</div>
+
+<div class="queue-item">
+<span>Sneha Patil</span>
+<span>12:00 PM</span>
+</div>
+
+</div>
+
+<div class="box activity">
+
+<h3>Recent Activity</h3>
+
+<p>✔ Prescription sent to Rahul Sharma</p>
+<p>✔ Lab report reviewed</p>
+<p>✔ Appointment completed</p>
+<p>✔ Medical record updated</p>
 
 </div>
 
@@ -194,25 +222,43 @@ button{
 
 <div class="right">
 
-<div class="profile">
-<img src="https://via.placeholder.com/90" alt="Doctor">
-<h3>Dr. Vaibhav</h3>
-<p>Cardiologist</p>
+<div class="box">
+
+<h3>Mini Calendar</h3>
+
+<div class="calendar">
+<div>1</div>
+<div>2</div>
+<div>3</div>
+<div>4</div>
+<div>5</div>
+<div>6</div>
+<div class="today">7</div>
 </div>
 
-<div class="notice">
-<h3>Today's Notice</h3>
-<br>
-<p>✔ Team meeting at 5:00 PM</p>
-<p>✔ Review pending lab reports.</p>
 </div>
 
-<div class="actions">
-<h3>Quick Actions</h3>
+<div class="box">
 
-<button>Add Patient</button>
-<button>Create Prescription</button>
-<button>View Reports</button>
+<h3>Performance</h3>
+
+<p>Patients Treated This Week</p>
+
+<div class="progress">
+<span></span>
+</div>
+
+<p style="margin-top:10px;">82% Goal Achieved</p>
+
+</div>
+
+<div class="box">
+
+<h3>Quick Notes</h3>
+
+<p>• Staff meeting at 4 PM</p>
+<p>• Review MRI reports</p>
+<p>• Call emergency patient</p>
 
 </div>
 
